@@ -92,13 +92,13 @@ export default {
 	right: 5px;
 	font-size: 12px;
 	font-weight: bold;
-	color: rgb(148, 150, 151);
+	color: #696969;
 	/* https://stackoverflow.com/questions/4772906/css-is-it-possible-to-add-a-black-outline-around-each-character-in-text */
 	text-shadow: 1.25px 0 0 #000, 0 -1.25px 0 #000, 0 1.25px 0 #000,
 		-1.25px 0 0 #000;
 }
 .talking {
-	color: rgba(255, 255, 255, 0.822);
+	color: #ffff22
 }
 p {
 	margin: 0;
