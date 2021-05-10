@@ -20,8 +20,8 @@ end)
 
 -- TODO: Better implementation of this?
 RegisterCommand('vol', function(_, args)
-	if args[1] then
-		setVolume(args[1])
+	if args[1] and args[2] then
+		setVolume(args[1], args[2])
 	end
 end)
 
@@ -193,7 +193,7 @@ RegisterCommand('+cycleproximity', function()
 end, false)
 RegisterCommand('-cycleproximity', function()
 end)
-RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'F11'))
+RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'Z'))
 
 RegisterNetEvent('pma-voice:mutePlayer', function()
 	playerMuted = not playerMuted
