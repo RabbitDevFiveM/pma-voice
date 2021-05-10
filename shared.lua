@@ -1,18 +1,25 @@
 Cfg = {}
 -- possibly GetConvar('voice_modes', '0.5;2.0;5.0')
 -- possibly GetConvar('voice_modeNames', 'Whisper;Normal;Shouting') and seperate them on runtime?
-if GetConvar('voice_useNativeAudio', 'false') == 'true' then
+
+Cfg["Debug"] = true
+
+if GetConvar('voice_useNativeAudio', 'true') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
 	Cfg.voiceModes = {
-		{1.0, "Whisper"}, -- Whisper speech distance in gta distance units
-		{2.3, "Normal"}, -- Normal speech distance in gta distance units
-		{5.0, "Shouting"} -- Shout speech distance in gta distance units
+		{2.5, "Whisper"}, -- Whisper speech distance in gta distance units
+		{7.0, "Normal"}, -- Normal speech distance in gta distance units
+		{15.0, "Shouting"}, -- Shout speech distance in gta distance units
+		{50.0, "Activity"}, -- Shout speech distance in gta distance units
+        {500.0, "Megaphone"} -- 
 	}
 else
 	Cfg.voiceModes = {
-		{3.0, "Whisper"}, -- Whisper speech distance in gta distance units
-		{7.0, "Normal"}, -- Normal speech distance in gta distance units
-		{15.0, "Shouting"} -- Shout speech distance in gta distance units
+		{2.5, "Whisper"}, -- Whisper speech distance in gta distance units
+		{8.0, "Normal"}, -- Normal speech distance in gta distance units
+		{15.0, "Shouting"}, -- Shout speech distance in gta distance units
+		{50.0, "Activity"}, -- Shout speech distance in gta distance units
+        {500.0, "Megaphone"} -- hout speech distance in gta distance units
 	}
 end
 

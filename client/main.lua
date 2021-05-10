@@ -1,3 +1,5 @@
+ESX = nil
+
 local Cfg = Cfg
 local currentGrid = 0
 -- we can't use GetConvarInt because its not a integer, and theres no way to get a float... so use a hacky way it is!
@@ -12,6 +14,17 @@ radioEnabled, radioPressed, mode, radioChannel, callChannel = false, false, 2, 0
 
 radioData = {}
 callData = {}
+
+Citizen.CreateThread(function ()
+    while ESX == nil do
+     TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+     Citizen.Wait(1)
+    end
+   
+    while ESX.GetPlayerData() == nil do
+     Citizen.Wait(10)
+    end
+end)
 
 -- TODO: Convert the last Cfg to a Convar, while still keeping it simple.
 AddEventHandler('pma-voice:settingsCallback', function(cb)
@@ -168,8 +181,7 @@ function playMicClicks(clickType)
 	})
 end
 
-local playerMuted = false
-RegisterCommand('+cycleproximity', function()
+function changeMode()
 	if GetConvarInt('voice_enableProximity', 1) ~= 1 then return end
 	if playerMuted then return end
 
@@ -177,6 +189,15 @@ RegisterCommand('+cycleproximity', function()
 	local newMode = voiceMode + 1
 
 	voiceMode = (newMode <= #Cfg.voiceModes and newMode) or 1
+
+	if newMode == 4 and (not CheckHasItem('megaphone', 1) and not CheckHasItem('god', 1)) then
+		voiceMode = 1
+	end
+
+	if newMode == 5 and not CheckHasItem('god', 1) then
+		voiceMode = 1
+	end
+		
 	local voiceModeData = Cfg.voiceModes[voiceMode]
 	MumbleSetAudioInputDistance(voiceModeData[1] + 0.0)
 	mode = voiceMode
@@ -190,30 +211,35 @@ RegisterCommand('+cycleproximity', function()
 		voiceMode = voiceMode - 1
 	})
 	TriggerEvent('pma-voice:setTalkingMode', voiceMode)
+end
+
+function dprint(message)
+	if Cfg["Debug"] then
+		print(tostring(message))
+	end
+end
+
+function CheckHasItem(item_name, item_amount)
+	if ESX and ESX.GetPlayerData() then		
+		local inventory = ESX.GetPlayerData().inventory
+		for i=1, #inventory do
+		  local item = inventory[i]
+		  if item_name == item.name and tonumber(item.count) >= tonumber(item_amount) then
+			return true
+		  end
+		end
+	end
+    return false
+end
+
+local playerMuted = false
+RegisterCommand('+cycleproximity', function()
+	changeMode()
 end, false)
 
 RegisterCommand('cycleproximity', function() 
-	if GetConvarInt('voice_enableProximity', 1) ~= 1 then return end
-	if playerMuted then return end
-
-	local voiceMode = mode
-	local newMode = voiceMode + 1
-
-	voiceMode = (newMode <= #Cfg.voiceModes and newMode) or 1
-	local voiceModeData = Cfg.voiceModes[voiceMode]
-	MumbleSetAudioInputDistance(voiceModeData[1] + 0.0)
-	mode = voiceMode
-	plyState:set('proximity', {
-		index = voiceMode,
-		distance =  voiceModeData[1],
-		mode = voiceModeData[2],
-	}, GetConvarInt('voice_syncData', 0) == 1)
-	-- make sure we update the UI to the latest voice mode
-	SendNUIMessage({
-		voiceMode = voiceMode - 1
-	})
-	TriggerEvent('pma-voice:setTalkingMode', voiceMode)
-end)
+	changeMode()
+end, false)
 
 RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'Z'))
 RegisterKeyMapping("cycleproximity", "Cycle Proximity", "keyboard", "Z");
