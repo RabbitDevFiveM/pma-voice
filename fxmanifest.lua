@@ -32,3 +32,7 @@ provides {
     'toko-voip',
     'tokovoip_script'
 }
+
+exports {
+    "SetCallChannel"
+}

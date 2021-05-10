@@ -73,7 +73,7 @@ function setCallChannel(channel)
 	createPhoneThread()
 end
 
-exports('setCallChannel', setCallChannel)
+-- Exports
 exports('SetCallChannel', setCallChannel)
 
 exports('addPlayerToCall', function(call)
