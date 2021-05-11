@@ -265,14 +265,14 @@ RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('
 -- Simulate PTT when radio is active
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(0)
-
-		if initialised then
-
+		local sleep = 1000
+		if initialised and not IS_DEAD then
+			sleep = 0
 			if IsControlJustPressed(0, 20) then
 				changeMode()
 			end
 		end
+		Citizen.Wait(sleep)
 	end
 end)
 
