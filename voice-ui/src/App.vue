@@ -91,9 +91,9 @@ export default {
 }
 #logo img {
 	position: absolute;
-	top: 0px;
-	right: 7em;
-	width: 8em;
+	top: 2px;
+	right: 6em;
+	width: 4.5em;
 }
 .voiceInfo {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -102,7 +102,7 @@ export default {
 	bottom: 5px;
 	padding: 0;
 	right: 5px;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
 	color: #6464ff;
 	/* https://stackoverflow.com/questions/4772906/css-is-it-possible-to-add-a-black-outline-around-each-character-in-text */
