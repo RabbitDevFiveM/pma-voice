@@ -2,6 +2,9 @@
 	<body>
 		<audio id="audio_on" src="mic_click_on.ogg"></audio>
 		<audio id="audio_off" src="mic_click_off.ogg"></audio>
+		<div id="logo">
+			<img src="https://cdn.discordapp.com/attachments/740041186919841842/780777346574712853/ls1.png" class="ribbon"/>
+		</div>
 		<div class="voiceInfo">
 			<p v-if="voice.callInfo !== 0" :class="{ talking: voice.talking }">
 				[Call]
@@ -83,6 +86,15 @@ export default {
 </script>
 
 <style>
+#logo {
+	position: reactive;
+}
+#logo img {
+	position: absolute;
+	top: 0px;
+	right: 7em;
+	width: 8em;
+}
 .voiceInfo {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
 	position: fixed;
@@ -90,15 +102,15 @@ export default {
 	bottom: 5px;
 	padding: 0;
 	right: 5px;
-	font-size: 12px;
+	font-size: 16px;
 	font-weight: bold;
-	color: #696969;
+	color: #6464ff;
 	/* https://stackoverflow.com/questions/4772906/css-is-it-possible-to-add-a-black-outline-around-each-character-in-text */
 	text-shadow: 1.25px 0 0 #000, 0 -1.25px 0 #000, 0 1.25px 0 #000,
 		-1.25px 0 0 #000;
 }
 .talking {
-	color: #ffff22
+	color: #ffff5e
 }
 p {
 	margin: 0;
