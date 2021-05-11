@@ -175,10 +175,10 @@ end
 ---@param clickType boolean whether to play the 'on' or 'off' click. 
 function playMicClicks(clickType)
 	if micClicks ~= 'true' then return end
-	SendNUIMessage({
-		sound = (clickType and "audio_on" or "audio_off"),
-		volume = (clickType and (volume) or 0.05)
-	})
+	-- SendNUIMessage({
+	-- 	sound = (clickType and "audio_on" or "audio_off"),
+	-- 	volume = (clickType and (volume) or 0.05)
+	-- })
 end
 
 function changeMode()
