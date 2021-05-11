@@ -2,6 +2,7 @@ ESX = nil
 
 local Cfg = Cfg
 local currentGrid = 0
+local initialised = false
 -- we can't use GetConvarInt because its not a integer, and theres no way to get a float... so use a hacky way it is!
 local volumes = {
 	['radio'] = tonumber(GetConvar('voice_defaultVolume', '0.3')),
@@ -181,9 +182,24 @@ function playMicClicks(clickType)
 	-- })
 end
 
+local IS_DEAD = false
+
+AddEventHandler("playerSpawned", function()
+    IS_DEAD = false
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        IS_DEAD = IsPedDeadOrDying(PlayerPedId())
+        Citizen.Wait(500)
+    end
+end)
+
 function changeMode()
 	if GetConvarInt('voice_enableProximity', 1) ~= 1 then return end
 	if playerMuted then return end
+	
+	if IS_DEAD then return end
 
 	local voiceMode = mode
 	local newMode = voiceMode + 1
@@ -241,8 +257,24 @@ RegisterCommand('cycleproximity', function()
 	changeMode()
 end, false)
 
-RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'Z'))
-RegisterKeyMapping("cycleproximity", "Cycle Proximity", "keyboard", "Z");
+RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'F11'))
+
+-- RegisterKeyMapping("cycleproximity", "Cycle Proximity", "keyboard", "Z");
+
+
+-- Simulate PTT when radio is active
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(0)
+
+		if initialised then
+
+			if IsControlJustPressed(0, 20) then
+				changeMode()
+			end
+		end
+	end
+end)
 
 RegisterNetEvent('pma-voice:mutePlayer', function()
 	playerMuted = not playerMuted
@@ -438,6 +470,8 @@ AddEventHandler('onClientResourceStart', function(resource)
 			voiceMode = mode - 1
 		})
 	end
+
+	initialised = true
 end)
 
 RegisterCommand("grid", function()
