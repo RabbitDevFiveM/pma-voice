@@ -153,19 +153,9 @@ RegisterCommand('+radiotalk', function()
 end, false)
 
 RegisterCommand('-radiotalk', function()
-	if radioChannel > 0 or radioEnabled and radioPressed then
-		radioPressed = false
-		MumbleClearVoiceTargetPlayers(1)
-		playerTargets(NetworkIsPlayerTalking(PlayerId()) and callData or {})
-		TriggerEvent("pma-voice:radioActive", false)
-		playMicClicks(false)
-		if GetConvarInt('voice_enableRadioAnim', 0) == 1 then
-			StopAnimTask(PlayerPedId(), "random@arrests", "generic_radio_enter", -4.0)
-		end
-		TriggerServerEvent('pma-voice:setTalkingOnRadio', false)
-	end
 end, false)
-RegisterKeyMapping('+radiotalk', 'Talk over Radio', 'keyboard', GetConvar('voice_defaultRadio', 'U'))
+
+RegisterKeyMapping('+radiotalk', 'Talk over Radio', 'keyboard', GetConvar('voice_defaultRadio', 'LMENU'))
 
 --- event syncRadio
 --- syncs the players radio, only happens if the radio was set server side.
