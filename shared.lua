@@ -7,10 +7,11 @@ Cfg["Debug"] = false
 Cfg.micClicks = true -- Are clicks enabled or not
 Cfg.micClickOn = false -- Is click sound on active
 Cfg.micClickOff = false -- Is click sound off active
-
 if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
+	Cfg.defaultVoice = 3 -- ค่าเสียงเริ่มต้น
 	Cfg.voiceModes = {
+		{0.1, "Mute"},
 		{2.5, "Whisper"}, -- Whisper speech distance in gta distance units
 		{7.0, "Normal"}, -- Normal speech distance in gta distance units
 		{15.0, "Shouting"}, -- Shout speech distance in gta distance units
@@ -18,7 +19,9 @@ if GetConvar('voice_useNativeAudio', 'false') == 'true' then
         {500.0, "Megaphone"} --
 	}
 else
+	Cfg.defaultVoice = 3 -- ค่าเสียงเริ่มต้น
 	Cfg.voiceModes = {
+		{0.1, "Mute"}, -- Mute
 		{2.0, "กระซิบ"}, -- Whisper speech distance in gta distance units
 		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{23.0, "ตะโกน"}, -- Shout speech distance in gta distance units

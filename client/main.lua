@@ -9,8 +9,9 @@ plyState = LocalPlayer.state
 local micClicks = Cfg.micClicks
 local micClickOn = Cfg.micClickOn
 local micClickOff = Cfg.micClickOff
+
 playerServerId = GetPlayerServerId(PlayerId())
-radioEnabled, radioPressed, mode, radioChannel, callChannel = false, false, 2, 0, 0
+radioEnabled, radioPressed, mode, radioChannel, callChannel = false, false, Cfg.defaultVoice, 0, 0
 
 radioData = {}
 callData = {}
