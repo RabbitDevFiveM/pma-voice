@@ -6,7 +6,9 @@ local volumes = {
 	['phone'] = tonumber(GetConvar('voice_defaultVolume', '0.3')),
 }
 plyState = LocalPlayer.state
-local micClicks = true
+local micClicks = Cfg.micClicks
+local micClickOn = Cfg.micClickOn
+local micClickOff = Cfg.micClickOff
 playerServerId = GetPlayerServerId(PlayerId())
 radioEnabled, radioPressed, mode, radioChannel, callChannel = false, false, 2, 0, 0
 
@@ -162,10 +164,13 @@ end
 ---@param clickType boolean whether to play the 'on' or 'off' click. 
 function playMicClicks(clickType)
 	if micClicks ~= 'true' then return end
-	SendNUIMessage({
-		sound = (clickType and "audio_on" or "audio_off"),
-		volume = (clickType and (volume) or 0.05)
-	})
+
+	if micClickOn or micClickOff then
+		SendNUIMessage({
+			sound = (clickType and "audio_on" or "audio_off"),
+			volume = (clickType and (volume) or 0.05)
+		})
+	end
 end
 
 local playerMuted = false

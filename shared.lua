@@ -2,7 +2,11 @@ Cfg = {}
 -- possibly GetConvar('voice_modes', '0.5;2.0;5.0')
 -- possibly GetConvar('voice_modeNames', 'Whisper;Normal;Shouting') and seperate them on runtime?
 
-Cfg["Debug"] = true
+Cfg["Debug"] = false
+
+Cfg.micClicks = true -- Are clicks enabled or not
+Cfg.micClickOn = false -- Is click sound on active
+Cfg.micClickOff = false -- Is click sound off active
 
 if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
