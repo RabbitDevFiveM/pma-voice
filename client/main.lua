@@ -193,7 +193,8 @@ RegisterCommand('+cycleproximity', function()
 end, false)
 RegisterCommand('-cycleproximity', function()
 end)
-RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'F11'))
+
+RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'F5'))
 
 RegisterNetEvent('pma-voice:mutePlayer', function()
 	playerMuted = not playerMuted
@@ -303,7 +304,7 @@ Citizen.CreateThread(function()
 				})
 			end
 		end
-		Wait(50)
+		Wait(5)
 	end
 end)
 
