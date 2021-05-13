@@ -368,19 +368,19 @@ Citizen.CreateThread(function()
 end)
 
 -- cache their external servers so if it changes in runtime we can reconnect the client.
-local externalAddress = ''
-local externalPort = 0
-CreateThread(function()
-	while true do
-		Wait(500)
-		-- only change if what we have doesn't match the cache
-		if GetConvar('voice_externalAddress', '') ~= externalAddress or GetConvarInt('voice_externalPort', 0) ~= externalPort then
-			externalAddress = GetConvar('voice_externalAddress', '')
-			externalPort = GetConvarInt('voice_externalPort', 0)
-			MumbleSetServerAddress(GetConvar('voice_externalAddress', ''), GetConvarInt('voice_externalPort', 0))
-		end
-	end
-end)
+-- local externalAddress = ''
+-- local externalPort = 0
+-- CreateThread(function()
+-- 	while true do
+-- 		Wait(500)
+-- 		-- only change if what we have doesn't match the cache
+-- 		if GetConvar('voice_externalAddress', '') ~= externalAddress or GetConvarInt('voice_externalPort', 0) ~= externalPort then
+-- 			externalAddress = GetConvar('voice_externalAddress', '')
+-- 			externalPort = GetConvarInt('voice_externalPort', 0)
+-- 			MumbleSetServerAddress(GetConvar('voice_externalAddress', ''), GetConvarInt('voice_externalPort', 0))
+-- 		end
+-- 	end
+-- end)
 
 --- forces the player to resync with the mumble server
 --- sets their server address (if there is one) and forces their grid to update
