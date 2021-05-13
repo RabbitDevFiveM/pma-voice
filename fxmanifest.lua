@@ -21,6 +21,7 @@ files {
     'ui/css/*.css',
     'ui/js/*.js',
     'ui/index.html',
+    'ui/img/logo.png',
 }
 
 ui_page 'ui/index.html'

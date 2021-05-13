@@ -3,7 +3,7 @@
 		<audio id="audio_on" src="mic_click_on.ogg"></audio>
 		<audio id="audio_off" src="mic_click_off.ogg"></audio>
 		<div id="logo">
-			<img src="https://cdn.discordapp.com/attachments/740041186919841842/780777346574712853/ls1.png" class="ribbon"/>
+			<img src="./logo.png" class="ribbon"/>
 		</div>
 		<div class="voiceInfo">
 			<p v-if="voice.callInfo !== 0" :class="{ talking: voice.talking }">
@@ -13,11 +13,11 @@
 				{{ voice.radioChannel }} Mhz [Radio]
 			</p>
 
-			<p v-if="voice.warningMsg" :class="{ talking: voice.talking }">
+			<p v-if="voice.warningMsg" :class="{ warning: voice.warningMsg }">
 				[Warning] {{ voice.warningMsg }}
 			</p>
 
-			<p v-else="voice.voiceModes.length" :class="{ talking: voice.talking }">
+			<p v-else-if="!voice.warningMsg && voice.voiceModes.length" :class="{ talking: voice.talking }">
 				[Mumble] {{ voice.voiceModes[voice.voiceMode][1] }}
 			</p>
 			
@@ -121,6 +121,10 @@ export default {
 }
 .talking {
 	color: rgba(244, 196, 65, 255);
+}
+.warning {
+	color: #ff0000;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 p {
 	margin: 0;
