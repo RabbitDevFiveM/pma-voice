@@ -205,11 +205,25 @@ function CheckHasItem(item_name, item_amount)
 end
 
 local playerMuted = false
+local IS_DEAD = false
+
+Citizen.CreateThread(function()
+    while(true) do
+        IS_DEAD = IsPedDeadOrDying(PlayerPedId())
+        Citizen.Wait(500)
+    end
+end)
+
+AddEventHandler("playerSpawned", function()
+	IS_DEAD = false
+	Wait(1000)
+end)
 
 function changeMode()
 	if GetConvarInt('voice_enableProximity', 1) ~= 1 then return end
 	if playerMuted then return end
 	if not PlayerLoaded then return end
+	if IS_DEAD then return end
 
 	local voiceMode = mode
 	local newMode = voiceMode + 1
