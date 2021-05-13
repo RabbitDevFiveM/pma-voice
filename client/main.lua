@@ -217,6 +217,15 @@ end)
 AddEventHandler("playerSpawned", function()
 	IS_DEAD = false
 	Wait(1000)
+	if playerMuted then
+		Mute()
+	end
+end)
+
+AddEventHandler('esx:onPlayerDeath', function()
+	if not playerMuted then
+		Mute()
+	end
 end)
 
 function changeMode()
@@ -253,15 +262,7 @@ function changeMode()
 	TriggerEvent('pma-voice:setTalkingMode', voiceMode)
 end
 
-RegisterCommand('+cycleproximity', function()
-	changeMode()
-end, false)
-RegisterCommand('-cycleproximity', function()
-end)
-
-RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'Z'))
-
-RegisterNetEvent('pma-voice:mutePlayer', function()
+function Mute()
 	playerMuted = not playerMuted
 	
 	if playerMuted then
@@ -271,15 +272,37 @@ RegisterNetEvent('pma-voice:mutePlayer', function()
 			mode = 'Muted',
 		}, GetConvarInt('voice_syncData', 0) == 1)
 		MumbleSetAudioInputDistance(0.1)
+		SendNUIMessage({
+			voiceMode = 'Muted'
+		})
 	else
-		local voiceModeData = Cfg.voiceModes[mode]
+		local voiceMode = 2
+		local voiceModeData = Cfg.voiceModes[voiceMode]
+		MumbleSetAudioInputDistance(voiceModeData[1] + 0.0)
+		mode = voiceMode
 		plyState:set('proximity', {
-			index = mode,
+			index = voiceMode,
 			distance =  voiceModeData[1],
 			mode = voiceModeData[2],
 		}, GetConvarInt('voice_syncData', 0) == 1)
-		MumbleSetAudioInputDistance(Cfg.voiceModes[mode][1])
+		-- make sure we update the UI to the latest voice mode
+		SendNUIMessage({
+			voiceMode = voiceMode - 1
+		})
+		TriggerEvent('pma-voice:setTalkingMode', voiceMode)
 	end
+end
+
+RegisterCommand('+cycleproximity', function()
+	changeMode()
+end, false)
+RegisterCommand('-cycleproximity', function()
+end)
+
+RegisterKeyMapping('+cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'Z'))
+
+RegisterNetEvent('pma-voice:mutePlayer', function()
+	Mute()
 end)
 
 --- function setVoiceProperty

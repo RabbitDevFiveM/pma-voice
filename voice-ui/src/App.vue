@@ -18,7 +18,7 @@
 			</p>
 
 			<p v-else-if="!voice.warningMsg && voice.voiceModes.length" :class="{ talking: voice.talking }">
-				[Mumble] {{ voice.voiceModes[voice.voiceMode][1] }}
+				[Mumble] {{ voice.voiceMode === "Muted" ? "Muted" : voice.voiceModes[voice.voiceMode] && voice.voiceModes[voice.voiceMode][1] }}
 			</p>
 			
 		</div>
