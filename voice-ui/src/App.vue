@@ -12,9 +12,15 @@
 			<p v-if="voice.radioEnabled && voice.radioChannel !== 0" :class="{ talking: voice.usingRadio }">
 				{{ voice.radioChannel }} Mhz [Radio]
 			</p>
-			<p v-if="voice.voiceModes.length" :class="{ talking: voice.talking }">
+
+			<p v-if="voice.warningMsg" :class="{ talking: voice.talking }">
+				[Warning] {{ voice.warningMsg }}
+			</p>
+
+			<p v-else="voice.voiceModes.length" :class="{ talking: voice.talking }">
 				[Mumble] {{ voice.voiceModes[voice.voiceMode][1] }}
 			</p>
+			
 		</div>
 	</body>
 </template>
@@ -32,12 +38,17 @@ export default {
 			usingRadio: false,
 			callInfo: 0,
 			talking: false,
+			warningMsg: null,
 		});
 
 		// stops from toggling voice at the end of talking
 		let usingUpdated = false
 		window.addEventListener("message", function(event) {
 			const data = event.data;
+
+			if (data.warningMsg !== undefined ) {
+				voice.warningMsg = data.warningMsg;
+			}
 
 			if (data.voiceModes !== undefined) {
 				voice.voiceModes = JSON.parse(data.voiceModes);

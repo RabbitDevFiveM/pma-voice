@@ -340,10 +340,18 @@ Citizen.CreateThread(function()
 	})
 	while true do
 		-- wait for reconnection, trying to set your voice channel when theres nothing to set it to is useless.
-		while not MumbleIsConnected() do
-			currentGrid = -1 -- reset the grid to something out of bounds so it will resync their zone on disconnect.
-			Wait(100)
+		
+		if not MumbleIsConnected() then
+			while not MumbleIsConnected() do
+				SendNUIMessage({ warningMsg = "Not connected to mumble" })
+				currentGrid = -1 -- reset the grid to something out of bounds so it will resync their zone on disconnect.
+				Wait(100)
+			end
+
+		else
+			SendNUIMessage({ warningMsg = "" })
 		end
+		
 		updateZone()
 		if GetConvarInt('voice_enableUi', 1) == 1 then
 			if lastRadioStatus ~= radioPressed or lastTalkingStatus ~= (NetworkIsPlayerTalking(PlayerId()) == 1) then
@@ -351,7 +359,7 @@ Citizen.CreateThread(function()
 				lastTalkingStatus = NetworkIsPlayerTalking(PlayerId()) == 1
 				SendNUIMessage({
 					usingRadio = lastRadioStatus,
-					talking = lastTalkingStatus
+					talking = lastTalkingStatus,
 				})
 			end
 		end
