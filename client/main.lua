@@ -228,6 +228,19 @@ AddEventHandler('esx:onPlayerDeath', function()
 	end
 end)
 
+RegisterNetEvent('mumble:SetMute')
+AddEventHandler('mumble:SetMute', function(status)
+	if status then
+		if not playerMuted then
+			Mute()
+		end
+	else
+		if playerMuted then
+			Mute()
+		end
+	end
+end)
+
 function changeMode()
 	if GetConvarInt('voice_enableProximity', 1) ~= 1 then return end
 	if playerMuted then return end
