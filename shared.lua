@@ -11,20 +11,22 @@ if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
 	Cfg.defaultVoice = 2 -- ค่าเสียงเริ่มต้น
 	Cfg.voiceModes = {
-		{2.5, "Whisper"}, -- Whisper speech distance in gta distance units
-		{7.0, "Normal"}, -- Normal speech distance in gta distance units
-		{15.0, "Shouting"}, -- Shout speech distance in gta distance units
-		{50.0, "Activity"}, -- Shout speech distance in gta distance units
-        {500.0, "Megaphone"} --
+		{0.1, "Mute"}, -- ไม่มีใครได้ยิน
+		{2.0, "กระซิบ"}, -- Whisper speech distance in gta distance units
+		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
+		{22.0, "ตะโกน"}, -- Shout speech distance in gta distance units
+		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
+        {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
 else
 	Cfg.defaultVoice = 2 -- ค่าเสียงเริ่มต้น
 	Cfg.voiceModes = {
+		{0.1, "Mute"}, -- ไม่มีใครได้ยิน
 		{2.0, "กระซิบ"}, -- Whisper speech distance in gta distance units
 		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
-		{23.0, "ตะโกน"}, -- Shout speech distance in gta distance units
-		{50.0, "กิจกรรม"}, -- Shout speech distance in gta distance units
-        {500.0, "พระเจ้า"} -- hout speech distance in gta distance units
+		{22.0, "ตะโกน"}, -- Shout speech distance in gta distance units
+		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
+        {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
 end
 
