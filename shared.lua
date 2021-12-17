@@ -20,8 +20,8 @@ if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 else
 	Cfg.defaultVoice = 2 -- ค่าเสียงเริ่มต้น
 	Cfg.voiceModes = {
-		{1.3, "กระซิบ"}, -- Whisper speech distance in gta distance units
-		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
+		{1.8, "กระซิบ"}, -- Whisper speech distance in gta distance units
+		{7.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
 		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
