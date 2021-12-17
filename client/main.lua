@@ -33,6 +33,14 @@ Citizen.CreateThread(function ()
 	PlayerLoaded = true
 end)
 
+AddEventHandler("rabbit_core:clearMemory", function()
+    Citizen.CreateThread(function()
+        local wait = math.random(100, 2000)
+        Wait(wait)
+        collectgarbage()
+    end)
+end)
+
 -- TODO: Convert the last Cfg to a Convar, while still keeping it simple.
 AddEventHandler('pma-voice:settingsCallback', function(cb)
 	cb(Cfg)

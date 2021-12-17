@@ -21,6 +21,14 @@ CreateThread(function()
 	end
 end)
 
+AddEventHandler("rabbit_core:clearMemory", function()
+    Citizen.CreateThread(function()
+        local wait = math.random(100, 2000)
+        Wait(wait)
+        collectgarbage()
+    end)
+end)
+
 RegisterNetEvent('playerJoined', function()
 	if not voiceData[source] then
 		voiceData[source] = defaultTable(source)
