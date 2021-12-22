@@ -21,6 +21,8 @@
 				{{ voice.voiceModes[voice.voiceMode][1] }} [Range] -->
 			</p>
 		</div>
+		<div class="radio-list-container" id="voip-radio-list">
+		</div>
 	</body>
 </template>
 
@@ -86,6 +88,47 @@ export default {
 				click.volume = data.volume;
 				click.play().catch((e) => {});
 			}
+
+			if (data.clearRadio === true) {
+				let radioListElem = document.getElementById("voip-radio-list");
+				while (radioListElem.firstChild) {
+					radioListElem.removeChild(radioListElem.firstChild)
+				}
+			}
+
+			if (data.radioId != null) {
+				let radioListElem = document.getElementById("voip-radio-list");
+
+				if (!radioListElem.firstChild) { //add radio list header
+					let listHeader = document.createElement("div");
+
+					listHeader.id = "voip-radio-list-header";
+					listHeader.textContent = "\uD83D\uDCE1Familie City - Radio List";
+					listHeader.style.textDecorationLine = "underline";
+
+					radioListElem.appendChild(listHeader);
+				}
+
+				if (data.radioName != null) {
+					let listItem = document.createElement("div");
+
+					listItem.id = "voip-radio-list-item-" + data.radioId;
+					listItem.textContent = data.radioName + ' ' + (data.self ? "\uD83D\uDD38" : "\uD83D\uDD39");
+
+					radioListElem.appendChild(listItem);
+				} else if (data.radioTalking != null) {
+					let listItem = document.getElementById("voip-radio-list-item-" + data.radioId)
+					
+					if (data.radioTalking) {
+						listItem.className = "talking"
+					} else {
+						listItem.className = ""
+					}
+				} else {
+					let listItem = document.getElementById("voip-radio-list-item-" + data.radioId)
+					radioListElem.removeChild(listItem);
+				}
+			}
 		});
 
 		return { voice };
@@ -128,5 +171,20 @@ export default {
 }
 p {
 	margin: 0;
+}
+.radio-list-container {
+	position: absolute;
+	top: 140px;
+	right: 0%;
+	text-align: right;
+	padding: 6px;
+	font-family: sans-serif;
+	font-weight: bold;
+	color: rgb(1, 176, 240);
+	font-size: 0.7vw;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.list-item {
+	padding-top: 3px;
 }
 </style>

@@ -2,6 +2,10 @@ voiceData = {}
 radioData = {}
 callData = {}
 
+ESX = nil
+
+TriggerEvent("esx:getSharedObject", function(obj) ESX = obj end)
+
 function defaultTable(source)
 	handleStateBagInitilization(source)
 	return {

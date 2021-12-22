@@ -67,13 +67,38 @@ function addPlayerToRadio(source, radioChannel)
 	-- if not create it (basically if not radiodata make radiodata)
 	radioData[radioChannel] = radioData[radioChannel] or {}
 	for player, _ in pairs(radioData[radioChannel]) do
-		TriggerClientEvent('pma-voice:addPlayerToRadio', player, source)
+		local xPlayer = ESX.GetPlayerFromId(source)
+		if xPlayer then
+			if xPlayer.job.name == 'police' or xPlayer.job.name == 'ambulance' then
+				TriggerClientEvent('pma-voice:addPlayerToRadio', player, source, GetPlayerName(source))
+			end
+		end
 	end
 	voiceData[source] = voiceData[source] or defaultTable(source)
-
+	
 	voiceData[source].radio = radioChannel
 	radioData[radioChannel][source] = false
 	TriggerClientEvent('pma-voice:syncRadioData', source, radioData[radioChannel])
+end
+
+function addPlayersToMyRadio(source, radioChannel)
+	radioData[radioChannel] = radioData[radioChannel] or {}
+	if radioData[radioChannel] then
+		-- TriggerClientEvent('pma-voice:addPlayerToRadio', source, source, GetPlayerName(source))
+		local xPlayer = ESX.GetPlayerFromId(source)
+		if xPlayer then
+			if xPlayer.job.name == 'police' or xPlayer.job.name == 'ambulance' then
+				for player, _ in pairs(radioData[radioChannel]) do
+					if player ~= source then
+						local xPlayer = ESX.GetPlayerFromId(player)
+						if xPlayer.job.name == 'police' or xPlayer.job.name == 'ambulance' then
+							TriggerClientEvent('pma-voice:addPlayerToRadio', source, player, GetPlayerName(player))
+						end
+					end
+				end
+			end
+		end
+	end
 end
 
 -- TODO: Implement this in a way that allows players to be on multiple channels
@@ -102,6 +127,7 @@ function setPlayerRadio(source, _radioChannel)
 	Player(source).state.radioChannel = radioChannel
 	if radioChannel ~= 0 and plyVoice.radio == 0 then
 		addPlayerToRadio(source, radioChannel)
+		addPlayersToMyRadio(source, radioChannel)
 	elseif radioChannel == 0 then
 		removePlayerFromRadio(source, plyVoice.radio)
 	elseif plyVoice.radio > 0 then

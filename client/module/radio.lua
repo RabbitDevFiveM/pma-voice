@@ -27,14 +27,16 @@ function setTalkingOnRadio(plySource, enabled)
 	toggleVoice(plySource, enabled, 'radio')
 	radioData[plySource] = enabled
 	playMicClicks(enabled)
+	SendNUIMessage({ radioId = plySource, radioTalking = enabled }) -- Add player to radio list
 end
 RegisterNetEvent('pma-voice:setTalkingOnRadio', setTalkingOnRadio)
 
 --- event addPlayerToRadio
 --- adds a player onto the radio.
 ---@param plySource number the players server id to add to the radio.
-function addPlayerToRadio(plySource)
+function addPlayerToRadio(plySource, plyName)
 	radioData[plySource] = false
+	SendNUIMessage({ radioId = plySource, radioName = plyName }) -- Add player to radio list
 	if radioPressed then
 		logger.info('[radio] %s joined radio %s while we were talking, adding them to targets', plySource, radioChannel)
 		playerTargets(radioData, MumbleIsPlayerTalking(PlayerId()) and callData or {})
@@ -60,6 +62,7 @@ function removePlayerFromRadio(plySource)
 	else
 		radioData[plySource] = nil
 		toggleVoice(plySource, false)
+		SendNUIMessage({ radioId = plySource }) -- Add player to radio list
 		if radioPressed then
 			logger.info('[radio] %s left radio %s while we were talking, updating targets.', plySource, radioChannel)
 			playerTargets(radioData, MumbleIsPlayerTalking(PlayerId()) and callData or {})
@@ -74,6 +77,9 @@ RegisterNetEvent('pma-voice:removePlayerFromRadio', removePlayerFromRadio)
 --- sets the local players current radio channel and updates the server
 ---@param channel number the channel to set the player to, or 0 to remove them.
 function setRadioChannel(channel)
+	if channel == 0 then
+		SendNUIMessage({ clearRadio = true })
+	end
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
 	TriggerServerEvent('pma-voice:setPlayerRadio', channel)
 	radioChannel = channel
