@@ -1,16 +1,25 @@
 Cfg = {}
--- possibly GetConvar('voice_modes', '0.5;2.0;5.0')
--- possibly GetConvar('voice_modeNames', 'Whisper;Normal;Shouting') and seperate them on runtime?
 
-Cfg["Debug"] = false
+voiceTarget = 1
+radioTarget = 2
+callTarget = 3
 
-Cfg.micClicks = true -- Are clicks enabled or not
-Cfg.micClickOn = false -- Is click sound on active
-Cfg.micClickOff = false -- Is click sound off active
+gameVersion = GetGameName()
+
+-- these are just here to satisfy linting
+if not IsDuplicityVersion() then
+	LocalPlayer = LocalPlayer
+	playerServerId = GetPlayerServerId(PlayerId())
+end
+Player = Player
+Entity = Entity
+
 if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
-	Cfg.defaultVoice = 2 -- ค่าเสียงเริ่มต้น
 	Cfg.voiceModes = {
+		-- {1.5, "Whisper"}, -- Whisper speech distance in gta distance units
+		-- {3.0, "Normal"}, -- Normal speech distance in gta distance units
+		-- {6.0, "Shouting"} -- Shout speech distance in gta distance units
 		{1.5, "กระซิบ"}, -- Whisper speech distance in gta distance units
 		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{22.0, "ตะโกน"}, -- Shout speech distance in gta distance units
@@ -18,8 +27,10 @@ if GetConvar('voice_useNativeAudio', 'false') == 'true' then
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
 else
-	Cfg.defaultVoice = 2 -- ค่าเสียงเริ่มต้น
 	Cfg.voiceModes = {
+		-- {3.0, "Whisper"}, -- Whisper speech distance in gta distance units
+		-- {7.0, "Normal"}, -- Normal speech distance in gta distance units
+		-- {15.0, "Shouting"} -- Shout speech distance in gta distance units
 		{1.8, "กระซิบ"}, -- Whisper speech distance in gta distance units
 		{7.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
@@ -35,15 +46,18 @@ logger = {
 	['info'] = function(message, ...)
 		if GetConvarInt('voice_debugMode', 0) >= 1 then
 			print(('[info] ' .. message):format(...))
-		end	
+		end
 	end,
 	['warn'] = function(message, ...)
 		print(('[^1WARNING^7] ' .. message):format(...))
 	end,
+	['error'] = function(message, ...)
+		error((message):format(...))
+	end,
 	['verbose'] = function(message, ...)
 		if GetConvarInt('voice_debugMode', 0) >= 4 then
 			print(('[verbose] ' .. message):format(...))
-		end	
+		end
 	end,
 }
 
@@ -52,7 +66,8 @@ function tPrint(tbl, indent)
 	indent = indent or 0
 	for k, v in pairs(tbl) do
 		local tblType = type(v)
-		formatting = string.rep("  ", indent) .. k .. ": "
+		local formatting = string.rep("  ", indent) .. k .. ": "
+
 		if tblType == "table" then
 			print(formatting)
 			tPrint(v, indent + 1)
@@ -64,4 +79,27 @@ function tPrint(tbl, indent)
 			print(formatting .. v)
 		end
 	end
+end
+
+local function types(args)
+    local argType = type(args[1])
+    for i = 2, #args do
+        local arg = args[i]
+        if argType == arg then
+            return true, argType
+        end
+    end
+    return false, argType
+end
+
+function type_check(...)
+    local vars = {...}
+    for i = 1, #vars do
+        local var = vars[i]
+        local matchesType, varType = types(var)
+        if not matchesType then
+            table.remove(var, 1)
+            error(("Invalid type sent to argument #%s, expected %s, got %s"):format(i, table.concat(var, "|"), varType))
+        end
+    end
 end
