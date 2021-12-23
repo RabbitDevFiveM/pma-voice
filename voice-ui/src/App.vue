@@ -10,7 +10,8 @@
 				[Call]
 			</p>
 			<p v-if="voice.radioEnabled && voice.radioChannel !== 0" :class="{ talking: voice.usingRadio }">
-				{{ voice.radioChannel }} Mhz [Radio]
+				<!-- {{ voice.radioChannel }} Mhz [Radio] -->
+				กำลังใช้งานวิทยุ
 			</p>
 			<p v-if="voice.warningMsg" :class="{ warning: voice.warningMsg }">
 				[Familie City] {{ voice.warningMsg }}
