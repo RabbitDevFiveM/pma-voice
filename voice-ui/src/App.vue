@@ -5,7 +5,7 @@
 		<div id="logo">
 			<img src="https://cdn.discordapp.com/attachments/923167050044678156/925454893743996928/FML_80.png" class="ribbon"/>
 		</div>
-		<div class="voiceInfo">
+		<div v-if="voice.uiEnabled" class="voiceInfo">
 			<p v-if="voice.callInfo !== 0" :class="{ talking: voice.talking }">
 				[Call]
 			</p>
@@ -33,10 +33,11 @@ export default {
 	name: "App",
 	setup() {
 		const voice = reactive({
+			uiEnabled: true,
 			voiceModes: [],
 			voiceMode: 0,
 			radioChannel: 0,
-			radioEnabled: false,
+			radioEnabled: true,
 			usingRadio: false,
 			callInfo: 0,
 			talking: false,
@@ -44,7 +45,6 @@ export default {
 		});
 
 		// stops from toggling voice at the end of talking
-		let usingUpdated = false
 		window.addEventListener("message", function(event) {
 			const data = event.data;
 
@@ -52,8 +52,16 @@ export default {
 				voice.warningMsg = data.warningMsg;
 			}
 
+			if (data.uiEnabled !== undefined) {
+				voice.uiEnabled = data.uiEnabled
+			}
+
 			if (data.voiceModes !== undefined) {
 				voice.voiceModes = JSON.parse(data.voiceModes);
+				// Push our own custom type for modes that have their range changed
+				let voiceModes = [...voice.voiceModes]
+				voiceModes.push([0.0, "Custom"])
+				voice.voiceModes = voiceModes
 			}
 
 			if (data.voiceMode !== undefined) {
@@ -72,23 +80,22 @@ export default {
 				voice.callInfo = data.callInfo;
 			}
 
-			if (data.usingRadio !== voice.usingRadio) {
-				usingUpdated = true
-				voice.usingRadio = data.usingRadio
-				usingUpdated = false
+			if (data.usingRadio !== undefined && data.usingRadio !== voice.usingRadio) {
+				voice.usingRadio = data.usingRadio;
 			}
 			
-			if ((data.talking !== undefined) && !voice.usingRadio && !usingUpdated){
-				voice.talking = data.talking
+			if ((data.talking !== undefined) && !voice.usingRadio) {
+				voice.talking = data.talking;
 			}
 
-			if (data.sound && voice.radioEnabled) {
+			if (data.sound && voice.radioEnabled && voice.radioChannel !== 0) {
 				let click = document.getElementById(data.sound);
 				// discard these errors as its usually just a 'uncaught promise' from two clicks happening too fast.
 				click.load();
 				click.volume = data.volume;
 				click.play().catch((e) => {});
 			}
+
 
 			if (data.clearRadio === true) {
 				let radioListElem = document.getElementById("voip-radio-list");
@@ -132,6 +139,8 @@ export default {
 			}
 		});
 
+		fetch(`https://${GetParentResourceName()}/uiReady`, { method: 'POST' });
+
 		return { voice };
 	},
 };
@@ -164,7 +173,7 @@ export default {
 	text-shadow: -1px 0 black, 0 1px rgb(46, 46, 46), 1px 0 black, 0 -1px black;
 }
 .talking {
-	color: rgba(244, 196, 65, 255);
+	color: rgb(241, 241, 241);
 }
 .warning {
 	color: #ff7979;

@@ -1,6 +1,4 @@
-game {'gta5', 'rdr3'}
-
-rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
+game 'common'
 
 fx_version 'cerulean'
 author 'AvarianKnight'
@@ -15,6 +13,7 @@ lua54 'yes'
 shared_script 'shared.lua'
 
 client_scripts {
+	'client/utils/*',
 	'client/init/proximity.lua',
 	'client/init/init.lua',
 	'client/init/main.lua',
@@ -38,7 +37,6 @@ ui_page 'ui/index.html'
 
 provides {
 	'mumble-voip',
-    -- why does it use so many different names
     'tokovoip',
     'toko-voip',
     'tokovoip_script'
@@ -53,10 +51,11 @@ convar_category 'PMA-Voice' {
 	{ "Enable UI", "$voice_enableUi", "CV_INT", "1" },
 	{ "Enable F11 proximity key", "$voice_enableProximityCycle", "CV_INT", "1" },
 	{ "Proximity cycle key", "$voice_defaultCycle", "CV_STRING", "F11" },
-	{ "Voice volume", "$voice_defaultVolume", "CV_STRING", "0.3" },
+	{ "Voice radio volume", "$voice_defaultRadioVolume", "CV_INT", "30" },
+	{ "Voice phone volume", "$voice_defaultPhoneVolume", "CV_INT", "60" },
 	{ "Enable radios", "$voice_enableRadios", "CV_INT", "1" },
 	{ "Enable phones", "$voice_enablePhones", "CV_INT", "1" },
-	{ "Enable sublix", "$voice_enableSubmix", "CV_INT", "0" },
+	{ "Enable sublix", "$voice_enableSubmix", "CV_INT", "1" },
         { "Enable radio animation", "$voice_enableRadioAnim", "CV_INT", "0" },
 	{ "Radio key", "$voice_defaultRadio", "CV_STRING", "LALT" },
 	{ "UI refresh rate", "$voice_uiRefreshRate", "CV_INT", "200" },
