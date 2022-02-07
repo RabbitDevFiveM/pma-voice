@@ -104,7 +104,7 @@ export default {
 				}
 			}
 
-			if (data.radioId != null) {
+			if (data.radioPlayers && data.radioPlayers.length > 0) {
 				let radioListElem = document.getElementById("voip-radio-list");
 
 				if (!radioListElem.firstChild) { //add radio list header
@@ -116,6 +116,28 @@ export default {
 
 					radioListElem.appendChild(listHeader);
 				}
+
+				data.radioPlayers.map(p => {
+					let listItem = document.createElement("div");
+					listItem.id = "voip-radio-list-item-" + p.radioId;
+					listItem.textContent = p.radioName + ' ' + (data.self ? "\uD83D\uDD38" : "\uD83D\uDD39");
+
+					radioListElem.appendChild(listItem);
+				})
+			}
+
+			if (data.radioId != null) {
+				let radioListElem = document.getElementById("voip-radio-list");
+
+				// if (!radioListElem.firstChild) { //add radio list header
+				// 	let listHeader = document.createElement("div");
+
+				// 	listHeader.id = "voip-radio-list-header";
+				// 	listHeader.textContent = "\uD83D\uDCE1Familie City - Radio List";
+				// 	listHeader.style.textDecorationLine = "underline";
+
+				// 	radioListElem.appendChild(listHeader);
+				// }
 
 				if (data.radioName != null) {
 					let listItem = document.createElement("div");
@@ -134,7 +156,9 @@ export default {
 					}
 				} else {
 					let listItem = document.getElementById("voip-radio-list-item-" + data.radioId)
-					radioListElem.removeChild(listItem);
+					if (listItem) {
+						radioListElem.removeChild(listItem);
+					}
 				}
 			}
 		});

@@ -58,25 +58,24 @@ function addPlayerToRadio(source, radioChannel)
 	-- check if the channel exists, if it does set the varaible to it
 	-- if not create it (basically if not radiodata make radiodata)
 	radioData[radioChannel] = radioData[radioChannel] or {}
+	local playerData = {}
 	local plyName = radioNameGetter(source)
+
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local xName = radioNameGetter(source)
+	playerData[source] = { playerId = source, name = xName, job = xPlayer.job.name}
 	for player, _ in pairs(radioData[radioChannel]) do
-		TriggerClientEvent('pma-voice:addPlayerToRadio', player, source, plyName)
+		local xPlayer = ESX.GetPlayerFromId(player)
+		local xName = radioNameGetter(player)
+		playerData[player] = { playerId = player, name = xName, job = xPlayer.job.name}
+		TriggerClientEvent('pma-voice:addPlayerToRadio', player, source, plyName, playerData[source])
 	end
 	voiceData[source] = voiceData[source] or defaultTable(source)
 	voiceData[source].radio = radioChannel
 	radioData[radioChannel][source] = false
-	TriggerClientEvent('pma-voice:syncRadioData', source, radioData[radioChannel], GetConvarInt("voice_syncPlayerNames", 0) == 1 and plyName)
+	TriggerClientEvent('pma-voice:syncRadioData', source, playerData, radioData[radioChannel], GetConvarInt("voice_syncPlayerNames", 0) == 1 and plyName)
 end
 
-function addPlayersToMyRadio(source, radioChannel)
-	radioData[radioChannel] = radioData[radioChannel] or {}
-	if radioData[radioChannel] then
-		for player, _ in pairs(radioData[radioChannel]) do
-			local plyName = radioNameGetter(player)
-			TriggerClientEvent('pma-voice:addPlayerToRadio', source, player, plyName)
-		end
-	end
-end
 --- removes a player from the specified channel
 ---@param source number the player to remove
 ---@param radioChannel number the current channel to remove them from
@@ -117,7 +116,6 @@ function setPlayerRadio(source, _radioChannel)
 	Player(source).state.radioChannel = radioChannel
 	if radioChannel ~= 0 and plyVoice.radio == 0 then
 		addPlayerToRadio(source, radioChannel)
-		addPlayersToMyRadio(source, radioChannel)
 	elseif radioChannel == 0 then
 		removePlayerFromRadio(source, plyVoice.radio)
 	elseif plyVoice.radio > 0 then

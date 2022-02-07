@@ -1,11 +1,12 @@
 local radioChannel = 0
 local radioNames = {}
 
+local radioPlayers = {}
 --- event syncRadioData
 --- syncs the current players on the radio to the client
 ---@param radioTable table the table of the current players on the radio
 ---@param localPlyRadioName string the local players name
-function syncRadioData(radioTable, localPlyRadioName)
+function syncRadioData(playerData, radioTable, localPlyRadioName)
 	radioData = radioTable
 	logger.info('[radio] Syncing radio table.')
 	if GetConvarInt('voice_debugMode', 0) >= 4 then
@@ -13,16 +14,38 @@ function syncRadioData(radioTable, localPlyRadioName)
 		tPrint(radioData)
 		print('-----------------------------')
 	end
+
 	for tgt, enabled in pairs(radioTable) do
 		if tgt ~= playerServerId then
 			toggleVoice(tgt, enabled, 'radio')
 		end
 	end
+	radioPlayers = {}
+	ESX.PlayerData = ESX.GetPlayerData()
+	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' then
+		for playerId, player in pairs(playerData) do
+			if playerId ~= playerServerId then
+				if player.job == 'police' or player.job == 'ambulance' then
+					radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
+				end
+			end
+		end
+	end
 	if GetConvarInt("voice_syncPlayerNames", 0) == 1 then
 		radioNames[playerServerId] = localPlyRadioName
 	end
+	RefreshList()
 end
 RegisterNetEvent('pma-voice:syncRadioData', syncRadioData)
+
+function RefreshList()
+	sendUIMessage({ clearRadio = true })
+	local data = {}
+	for playerId, player in pairs(radioPlayers) do
+		table.insert(data, { radioId= player.radioId, radioName = player.radioName })
+	end
+	sendUIMessage({ radioPlayers = data }) -- Add player to radio list
+end
 
 --- event setTalkingOnRadio
 --- sets the players talking status, triggered when a player starts/stops talking.
@@ -39,12 +62,18 @@ RegisterNetEvent('pma-voice:setTalkingOnRadio', setTalkingOnRadio)
 --- event addPlayerToRadio
 --- adds a player onto the radio.
 ---@param plySource number the players server id to add to the radio.
-function addPlayerToRadio(plySource, plyRadioName)
+function addPlayerToRadio(plySource, plyRadioName, plyData)
 	radioData[plySource] = false
-	sendUIMessage({ radioId = plySource, radioName = plyRadioName }) -- Add player to radio list
 	if GetConvarInt("voice_syncPlayerNames", 0) == 1 then
 		radioNames[plySource] = plyRadioName
 	end
+	ESX.PlayerData = ESX.GetPlayerData()
+	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' then
+		if plyData.job == 'police' or plyData.job == 'ambulance' then
+			radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
+		end
+	end
+	RefreshList()
 	if radioPressed then
 		logger.info('[radio] %s joined radio %s while we were talking, adding them to targets', plySource, radioChannel)
 		playerTargets(radioData, MumbleIsPlayerTalking(PlayerId()) and callData or {})
@@ -70,7 +99,8 @@ function removePlayerFromRadio(plySource)
 		playerTargets(MumbleIsPlayerTalking(PlayerId()) and callData or {})
 	else
 		toggleVoice(plySource, false)
-		sendUIMessage({ radioId = plySource }) -- Add player to radio list
+		radioPlayers[plySource] = nil
+		RefreshList()
 		if radioPressed then
 			logger.info('[radio] %s left radio %s while we were talking, updating targets.', plySource, radioChannel)
 			playerTargets(radioData, MumbleIsPlayerTalking(PlayerId()) and callData or {})
