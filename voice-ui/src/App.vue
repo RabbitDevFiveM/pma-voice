@@ -23,6 +23,7 @@
 			</p>
 		</div>
 		<div class="radio-list-container" id="voip-radio-list">
+				
 		</div>
 	</body>
 </template>
@@ -37,7 +38,7 @@ export default {
 			voiceModes: [],
 			voiceMode: 0,
 			radioChannel: 0,
-			radioEnabled: true,
+			radioEnabled: false,
 			usingRadio: false,
 			callInfo: 0,
 			talking: false,
@@ -150,7 +151,7 @@ export default {
 					let listItem = document.getElementById("voip-radio-list-item-" + data.radioId)
 					
 					if (data.radioTalking) {
-						listItem.className = "talking"
+						listItem.className = "radioTalking"
 					} else {
 						listItem.className = ""
 					}
@@ -199,6 +200,11 @@ export default {
 .talking {
 	color: rgb(241, 241, 241);
 }
+
+.radioTalking {
+    color: rgba(1, 176, 240);
+}
+
 .warning {
 	color: #ff7979;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
@@ -214,7 +220,8 @@ p {
 	padding: 6px;
 	font-family: sans-serif;
 	font-weight: bold;
-	color: rgb(1, 176, 240);
+	color: rgb(255, 255, 255);
+	background-color: rgba(39, 39, 39, 0.2);
 	font-size: 0.7vw;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
