@@ -53,19 +53,6 @@ AddEventHandler('esx:onPlayerDeath', function()
 	end
 end)
 
-function CheckHasItem(item_name, item_amount)
-	if ESX and ESX.GetPlayerData() then		
-		local inventory = ESX.GetPlayerData().inventory
-		for i=1, #inventory do
-		  local item = inventory[i]
-		  if item_name == item.name and tonumber(item.count) >= tonumber(item_amount) then
-			return true
-		  end
-		end
-	end
-    return false
-end
-
 RegisterNetEvent('mumble:SetMute')
 AddEventHandler('mumble:SetMute', function(status)
 	if status then
@@ -119,11 +106,11 @@ function changeMode()
 		
 		voiceMode = (newMode <= #Cfg.voiceModes and newMode) or 1
 	
-		if newMode == 4 and (not CheckHasItem('megaphone', 1) and not CheckHasItem('god', 1)) then
+		if newMode == 4 and (not ESX.Game.CheckHasItem('megaphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
 			voiceMode = 1
 		end
 	
-		if newMode == 5 and not CheckHasItem('god', 1) then
+		if newMode == 5 and not ESX.Game.CheckHasItem('god', 1) then
 			voiceMode = 1
 		end
 	
