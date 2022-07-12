@@ -22,10 +22,10 @@ function syncRadioData(playerData, radioTable, localPlyRadioName)
 	end
 	radioPlayers = {}
 	ESX.PlayerData = ESX.GetPlayerData()
-	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' then
+	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' or ESX.PlayerData.job.name == 'tc' then
 		for playerId, player in pairs(playerData) do
 			if playerId ~= playerServerId then
-				if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' then
+				if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' or player.job == 'tc' then
 					radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
 				end
 			end
@@ -68,8 +68,8 @@ function addPlayerToRadio(plySource, plyRadioName, plyData)
 		radioNames[plySource] = plyRadioName
 	end
 	ESX.PlayerData = ESX.GetPlayerData()
-	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' then
-		if plyData.job == 'police' or plyData.job == 'ambulance' or plyData.job == 'fbi' then
+	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' or ESX.PlayerData.job.name == 'tc' then
+		if plyData.job == 'police' or plyData.job == 'ambulance' or plyData.job == 'fbi' or plyData.job == 'tc' then
 			radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
 		end
 	end
