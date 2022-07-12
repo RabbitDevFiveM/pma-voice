@@ -3,7 +3,7 @@
 		<audio id="audio_on" src="mic_click_on.ogg"></audio>
 		<audio id="audio_off" src="mic_click_off.ogg"></audio>
 		<div id="logo">
-			<img src="https://cdn.discordapp.com/attachments/923167050044678156/925454893743996928/FML_80.png" class="ribbon"/>
+			<img src="https://cdn.discordapp.com/attachments/737530668061425735/995626217384460309/logo.png" class="ribbon"/>
 		</div>
 		<div v-if="voice.uiEnabled" class="voiceInfo">
 			<p v-if="voice.callInfo !== 0" :class="{ talking: voice.talking }">
