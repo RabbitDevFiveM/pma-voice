@@ -115,11 +115,22 @@ function changeMode()
 			mode = 1
 		end
 
-		if newMode == 4 and (not ESX.Game.CheckHasItem('megaphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
+		if Cfg.Dome and newMode == 4 then
+			local playerPed = PlayerPedId()
+			local coords = GetEntityCoords(playerPed)
+			for k, v in pairs(Cfg.Dome) do
+			  local dist = #(coords - v.coords)
+			  if dist > v.radius then
+				mode = 1
+			  end
+			end
+		end
+
+		if newMode == 5 and (not ESX.Game.CheckHasItem('megaphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
 			mode = 1
 		end
 	
-		if newMode == 5 and not ESX.Game.CheckHasItem('god', 1) then
+		if newMode == 6 and not ESX.Game.CheckHasItem('god', 1) then
 			mode = 1
 		end
 

@@ -21,6 +21,7 @@ if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 		{1.5, "กระซิบ"}, -- Whisper speech distance in gta distance units
 		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{22.0, "ตะโกน"}, -- Shout speech distance in gta distance units
+        {300.0, "โดม"}, -- Megaphone speech distance in gta distance units
 		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
@@ -32,6 +33,7 @@ else
 		{1.8, "กระซิบ"}, -- Whisper speech distance in gta distance units
 		{7.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
+		{300.0, "โดม"}, -- Activity speech distance in gta distance units
 		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
@@ -101,3 +103,9 @@ function type_check(...)
         end
     end
 end
+
+Cfg.Dome = {
+	{ coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
+	-- { coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
+	-- { coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
+}
