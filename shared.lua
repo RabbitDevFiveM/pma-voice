@@ -105,7 +105,7 @@ function type_check(...)
 end
 
 Cfg.Dome = {
-	{ coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
+	{ coords = vector3(3790.4602050781, 863.95367431641, 80.596046447754), radius = 80.0 },
 	-- { coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
 	-- { coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
 }
