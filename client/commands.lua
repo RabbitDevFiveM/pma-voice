@@ -121,7 +121,7 @@ function changeMode()
 			for k, v in pairs(Cfg.Dome) do
 			  local dist = #(coords - v.coords)
 			  if dist > v.radius then
-				mode = 1
+				newMode = 5
 			  end
 			end
 		end
