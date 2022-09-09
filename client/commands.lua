@@ -126,11 +126,15 @@ function changeMode()
 			end
 		end
 
-		if newMode == 5 and (not ESX.Game.CheckHasItem('megaphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
+		if newMode == 5 and (not ESX.Game.CheckHasItem('microphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
+			mode = 1
+		end
+
+		if newMode == 6 and (not ESX.Game.CheckHasItem('megaphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
 			mode = 1
 		end
 	
-		if newMode == 6 and not ESX.Game.CheckHasItem('god', 1) then
+		if newMode == 7 and not ESX.Game.CheckHasItem('god', 1) then
 			mode = 1
 		end
 

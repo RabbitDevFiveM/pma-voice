@@ -22,6 +22,7 @@ if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{22.0, "ตะโกน"}, -- Shout speech distance in gta distance units
         {300.0, "โดม"}, -- Megaphone speech distance in gta distance units
+		{30.0, "ไมโครโฟน"}, -- Activity speech distance in gta distance units
 		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
@@ -34,6 +35,7 @@ else
 		{7.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
 		{300.0, "โดม"}, -- Activity speech distance in gta distance units
+		{30.0, "ไมโครโฟน"}, -- Activity speech distance in gta distance units
 		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
