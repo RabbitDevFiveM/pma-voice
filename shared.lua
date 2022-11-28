@@ -15,22 +15,22 @@ Entity = Entity
 if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
 	Cfg.voiceModes = {
-		{1.5, "กระซิบ"}, -- Whisper speech distance in gta distance units
-		{8.0, "ปกติ"}, -- Normal speech distance in gta distance units
-		{22.0, "ตะโกน"}, -- Shout speech distance in gta distance units
-        {300.0, "โดม"}, -- Megaphone speech distance in gta distance units
+		{2.0, "กระซิบ"}, -- Whisper speech distance in gta distance units
+        {10.0, "ปกติ"}, -- Normal speech distance in gta distance units
+        {20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
+        {300.0, "โดม"}, -- Activity speech distance in gta distance units
 		{30.0, "ไมโครโฟน"}, -- Activity speech distance in gta distance units
-		{35.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
+        {60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
 else
 	Cfg.voiceModes = {
-		{1.5, "กระซิบ"}, -- Whisper speech distance in gta distance units
-		{7.0, "ปกติ"}, -- Normal speech distance in gta distance units
-		{20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
-		{300.0, "โดม"}, -- Activity speech distance in gta distance units
+		{2.0, "กระซิบ"}, -- Whisper speech distance in gta distance units
+        {10.0, "ปกติ"}, -- Normal speech distance in gta distance units
+        {20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
+        {300.0, "โดม"}, -- Activity speech distance in gta distance units
 		{30.0, "ไมโครโฟน"}, -- Activity speech distance in gta distance units
-		{60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
+        {60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
         {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
 	}
 end
