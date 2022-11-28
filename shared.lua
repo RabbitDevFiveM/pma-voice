@@ -28,9 +28,6 @@ if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	}
 else
 	Cfg.voiceModes = {
-		-- {3.0, "Whisper"}, -- Whisper speech distance in gta distance units
-		-- {7.0, "Normal"}, -- Normal speech distance in gta distance units
-		-- {15.0, "Shouting"} -- Shout speech distance in gta distance units
 		{1.8, "กระซิบ"}, -- Whisper speech distance in gta distance units
 		{7.0, "ปกติ"}, -- Normal speech distance in gta distance units
 		{20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
