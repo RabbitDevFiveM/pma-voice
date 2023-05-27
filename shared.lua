@@ -15,23 +15,21 @@ Entity = Entity
 if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
 	Cfg.voiceModes = {
-		{1.6, "กระซิบ"}, -- Whisper speech distance in gta distance units
-		{8.5, "ปกติ"}, -- Normal speech distance in gta distance units
-        {20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
-        {300.0, "โดม"}, -- Activity speech distance in gta distance units
-		{30.0, "ไมโครโฟน"}, -- Activity speech distance in gta distance units
-        {60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
-        {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
+        {0.8, "กระซิบ"},
+        {3.0, "ปกติ"},
+        {6.0, "ตะโกน"},
+        {300.0, "โดม"},
+		{60.0, "กิจกรรม"},
+        {500.0, "พระเจ้า"}
 	}
 else
 	Cfg.voiceModes = {
-		{1.6, "กระซิบ"}, -- Whisper speech distance in gta distance units
-		{8.5, "ปกติ"}, -- Normal speech distance in gta distance units
-        {20.0, "ตะโกน"}, -- Shout speech distance in gta distance units
-        {300.0, "โดม"}, -- Activity speech distance in gta distance units
-		{30.0, "ไมโครโฟน"}, -- Activity speech distance in gta distance units
-        {60.0, "กิจกรรม"}, -- Activity speech distance in gta distance units
-        {500.0, "พระเจ้า"} -- Megaphone speech distance in gta distance units
+        {2.1, "กระซิบ"},
+        {6.0, "ปกติ"},
+        {15.0, "ตะโกน"},
+		{300.0, "โดม"},
+		{60.0, "กิจกรรม"},
+        {500.0, "พระเจ้า"}
 	}
 end
 
@@ -102,4 +100,6 @@ end
 
 Cfg.Dome = {
 	{ coords = vector3(3790.4602050781, 863.95367431641, 80.596046447754), radius = 80.0 },
+	-- { coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
+	-- { coords = vector3(2963.3, 2812.9, 43.0), radius = 20.0 },
 }
