@@ -5,6 +5,11 @@
 		<div id="logo">
 			<img src="nui://pma-voice/fam_logo.png" class="ribbon"/>
 		</div>
+		<div class="timeInfo">
+			<p>
+				{{ getCurrentDateTime() }}
+			</p>
+		</div>
 		<div v-if="voice.uiEnabled" class="voiceInfo">
 			<p v-if="voice.callInfo !== 0" :class="{ talking: voice.talking }">
 				[Call]
@@ -32,6 +37,20 @@
 import { reactive } from "vue";
 export default {
 	name: "App",
+	methods: {
+    	 getCurrentDateTime() {
+			return new Date().toLocaleString('en-US', {
+				hour12: false,
+				hourCycle: 'h24',
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit',
+			});
+		},
+  	},
 	setup() {
 		const voice = reactive({
 			uiEnabled: true,
@@ -180,6 +199,19 @@ export default {
 	top: 30px;
 	right: 0px;
 	width: 4.5em;
+}
+.timeInfo {
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	position: fixed;
+	text-align: right;
+	bottom: 3px;
+	padding: 5px;
+	right: 8px;
+	font-size: 0.6vw;
+	font-weight: bold;
+	color: rgb(129, 128, 128);
+	/* border-radius: 0.9em; */
+	/* text-shadow: -1px 0 black, 0 1px rgb(46, 46, 46), 1px 0 black, 0 -1px black; */
 }
 .voiceInfo {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
