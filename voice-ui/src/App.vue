@@ -5,12 +5,10 @@
 		<div id="logo">
 			<img src="nui://pma-voice/fam_logo.png" class="ribbon"/>
 		</div>
-		<div class="timeInfo">
-			<p>
-				{{ getCurrentDateTime() }}
-			</p>
-		</div>
 		<div v-if="voice.uiEnabled" class="voiceInfo">
+			<p>
+				{{ currentDateTime }}
+			</p>
 			<p v-if="voice.callInfo !== 0" :class="{ talking: voice.talking }">
 				[Call]
 			</p>
@@ -37,18 +35,27 @@
 import { reactive } from "vue";
 export default {
 	name: "App",
+	data() {
+		return {
+			currentDateTime: this.getCurrentDateTime(), // เริ่มต้นด้วยค่าปัจจุบัน
+		};
+  	},
+	created() {
+		// อัปเดตค่าทุกๆ 1 วินาที
+		setInterval(() => {
+			this.currentDateTime = this.getCurrentDateTime();
+		}, 1000);
+	},
 	methods: {
-    	 getCurrentDateTime() {
-			return new Date().toLocaleString('en-US', {
-				hour12: false,
-				hourCycle: 'h24',
-				year: 'numeric',
-				month: 'short',
-				day: 'numeric',
-				hour: '2-digit',
-				minute: '2-digit',
-				second: '2-digit',
-			});
+    	getCurrentDateTime() {
+			const now = new Date();
+			const year = now.getFullYear();
+			const month = (now.getMonth() + 1).toString().padStart(2, '0');
+			const day = now.getDate().toString().padStart(2, '0');
+			const hours = now.getHours().toString().padStart(2, '0');
+			const minutes = now.getMinutes().toString().padStart(2, '0');
+			const seconds = now.getSeconds().toString().padStart(2, '0');
+			return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 		},
   	},
 	setup() {
@@ -199,19 +206,6 @@ export default {
 	top: 30px;
 	right: 0px;
 	width: 4.5em;
-}
-.timeInfo {
-	font-family: Avenir, Helvetica, Arial, sans-serif;
-	position: fixed;
-	text-align: right;
-	bottom: 3px;
-	padding: 5px;
-	right: 8px;
-	font-size: 0.6vw;
-	font-weight: bold;
-	color: rgb(129, 128, 128);
-	/* border-radius: 0.9em; */
-	/* text-shadow: -1px 0 black, 0 1px rgb(46, 46, 46), 1px 0 black, 0 -1px black; */
 }
 .voiceInfo {
 	font-family: Avenir, Helvetica, Arial, sans-serif;
