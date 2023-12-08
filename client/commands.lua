@@ -12,6 +12,16 @@ Citizen.CreateThread(function ()
 
 end)
 
+RegisterNetEvent('esx:playerLoaded')
+AddEventHandler('esx:playerLoaded', function(xPlayer)
+	ESX.PlayerData = xPlayer
+end)
+
+RegisterNetEvent('esx:setJob')
+AddEventHandler('esx:setJob', function(job)
+	ESX.PlayerData.job = job
+end)
+
 local wasProximityDisabledFromOverride = false
 disableProximityCycle = false
 RegisterCommand('setvoiceintent', function(source, args)

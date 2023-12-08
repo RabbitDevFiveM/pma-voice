@@ -21,12 +21,24 @@ function syncRadioData(playerData, radioTable, localPlyRadioName)
 		end
 	end
 	radioPlayers = {}
-	ESX.PlayerData = ESX.GetPlayerData()
+	local showPlayers = false
 	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' or ESX.PlayerData.job.name == 'tc' then
+		showPlayers = true
+	end
+
+	if ESX.Game.CheckHasItem('fam_radio', 1) then
+		showPlayers = true
+	end
+
+	if showPlayers then
 		for playerId, player in pairs(playerData) do
 			if playerId ~= playerServerId then
-				if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' or player.job == 'tc' then
+				if ESX.Game.CheckHasItem('fam_radio', 1) then
 					radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
+				else
+					if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' or player.job == 'tc' then
+						radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
+					end
 				end
 			end
 		end
@@ -67,12 +79,22 @@ function addPlayerToRadio(plySource, plyRadioName, plyData)
 	if GetConvarInt("voice_syncPlayerNames", 0) == 1 then
 		radioNames[plySource] = plyRadioName
 	end
-	ESX.PlayerData = ESX.GetPlayerData()
+
+	local showPlayers = false
 	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' or ESX.PlayerData.job.name == 'tc' then
-		if plyData.job == 'police' or plyData.job == 'ambulance' or plyData.job == 'fbi' or plyData.job == 'tc' then
+		showPlayers = true
+	end
+
+	if showPlayers then
+		if ESX.Game.CheckHasItem('fam_radio', 1) then
 			radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
+		else
+			if plyData.job == 'police' or plyData.job == 'ambulance' or plyData.job == 'fbi' or plyData.job == 'tc' then
+				radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
+			end
 		end
 	end
+
 	RefreshList()
 	if radioPressed then
 		logger.info('[radio] %s joined radio %s while we were talking, adding them to targets', plySource, radioChannel)

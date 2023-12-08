@@ -217,18 +217,18 @@ export default {
 	right: 8px;
 	font-size: 0.7vw;
 	font-weight: bold;
-	color: rgb(1, 176, 240);
+	color: rgb(182,56,243);
 	/* https://stackoverflow.com/questions/4772906/css-is-it-possible-to-add-a-black-outline-around-each-character-in-text */
 	background-color: rgba(39, 39, 39, 0.8);
 	border-radius: 0.9em;
 	text-shadow: -1px 0 black, 0 1px rgb(46, 46, 46), 1px 0 black, 0 -1px black;
 }
 .talking {
-	color: rgb(241, 241, 241);
+	color: rgb(65, 55, 55);
 }
 
 .radioTalking {
-    color: rgba(1, 176, 240);
+    color: rgba(182,56,243);
 }
 
 .warning {
