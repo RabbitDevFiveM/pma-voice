@@ -85,6 +85,10 @@ function addPlayerToRadio(plySource, plyRadioName, plyData)
 		showPlayers = true
 	end
 
+	if ESX.Game.CheckHasItem('fam_radio', 1) then
+		showPlayers = true
+	end
+
 	if showPlayers then
 		if ESX.Game.CheckHasItem('fam_radio', 1) then
 			radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
