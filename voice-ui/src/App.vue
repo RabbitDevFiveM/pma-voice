@@ -3,7 +3,7 @@
 		<audio id="audio_on" src="mic_click_on.ogg"></audio>
 		<audio id="audio_off" src="mic_click_off.ogg"></audio>
 		<div id="logo">
-			<img src="nui://pma-voice/fam_logo.png" class="ribbon"/>
+			<img src="nui://pma-voice/fammain.png" class="ribbon"/>
 		</div>
 		<div v-if="voice.uiEnabled" class="voiceInfo">
 			<p>
@@ -217,18 +217,20 @@ export default {
 	right: 8px;
 	font-size: 0.7vw;
 	font-weight: bold;
-	color: rgb(182,56,243);
+	color: rgb(241, 241, 241);
 	/* https://stackoverflow.com/questions/4772906/css-is-it-possible-to-add-a-black-outline-around-each-character-in-text */
 	background-color: rgba(39, 39, 39, 0.8);
 	border-radius: 0.9em;
 	text-shadow: -1px 0 black, 0 1px rgb(46, 46, 46), 1px 0 black, 0 -1px black;
 }
 .talking {
-	color: rgb(65, 55, 55);
+    color: rgba(1, 176, 240);
+	/* color: rgba(182,56,243); */
 }
 
 .radioTalking {
-    color: rgba(182,56,243);
+	color: rgb(1, 176, 240);
+	/* color: rgba(182,56,243); */
 }
 
 .warning {

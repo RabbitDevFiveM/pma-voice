@@ -31,7 +31,7 @@ files {
     'ui/css/*.css',
     'ui/js/*.js',
     'ui/index.html',
-	'fam_logo.png'
+	'fammain.png'
 }
 
 ui_page 'ui/index.html'
