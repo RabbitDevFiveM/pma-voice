@@ -44,6 +44,7 @@ end)
 
 playerMuted = false
 IS_DEAD = false
+adamantineZone = false
 
 Citizen.CreateThread(function()
     while(true) do
@@ -55,7 +56,7 @@ end)
 AddEventHandler("playerSpawned", function()
 	IS_DEAD = false
 	Wait(1000)
-	if playerMuted then
+	if playerMuted and not adamantineZone then
 		Mute()
 	end
 end)
@@ -64,6 +65,10 @@ AddEventHandler('esx:onPlayerDeath', function()
 	if not playerMuted then
 		Mute()
 	end
+end)
+
+AddEventHandler('adamantine:enterzone', function(status)
+	adamantineZone = status
 end)
 
 RegisterNetEvent('mumble:SetMute')

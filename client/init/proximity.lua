@@ -99,28 +99,32 @@ Citizen.CreateThread(function()
 			Wait(100)
 			SendNUIMessage({ warningMsg = "" })
 		end
-		-- Leave the check here as we don't want to do any of this logic 
-		if GetConvarInt('voice_enableUi', 1) == 1 then
-			local curTalkingStatus = MumbleIsPlayerTalking(PlayerId()) == 1
-			if lastRadioStatus ~= radioPressed or lastTalkingStatus ~= curTalkingStatus then
-				lastRadioStatus = radioPressed
-				lastTalkingStatus = curTalkingStatus
-				sendUIMessage({
-					usingRadio = lastRadioStatus,
-					talking = lastTalkingStatus
-				})
+
+		if not playerMuted then
+			-- Leave the check here as we don't want to do any of this logic 
+			if GetConvarInt('voice_enableUi', 1) == 1 then
+				local curTalkingStatus = MumbleIsPlayerTalking(PlayerId()) == 1
+				if lastRadioStatus ~= radioPressed or lastTalkingStatus ~= curTalkingStatus then
+					lastRadioStatus = radioPressed
+					lastTalkingStatus = curTalkingStatus
+					sendUIMessage({
+						usingRadio = lastRadioStatus,
+						talking = lastTalkingStatus
+					})
+				end
+			end
+	
+			if voiceState == "proximity" then
+				addNearbyPlayers()
+				local isSpectating = NetworkIsInSpectatorMode()
+				if isSpectating and not isListenerEnabled then
+					setSpectatorMode(true)
+				elseif not isSpectating and isListenerEnabled then
+					setSpectatorMode(false)
+				end
 			end
 		end
 
-		if voiceState == "proximity" then
-			addNearbyPlayers()
-			local isSpectating = NetworkIsInSpectatorMode()
-			if isSpectating and not isListenerEnabled then
-				setSpectatorMode(true)
-			elseif not isSpectating and isListenerEnabled then
-				setSpectatorMode(false)
-			end
-		end
 
 		Wait(GetConvarInt('voice_refreshRate', 200))
 	end
