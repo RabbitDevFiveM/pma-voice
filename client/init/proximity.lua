@@ -102,16 +102,16 @@ Citizen.CreateThread(function()
 
 		if not playerMuted then
 			-- Leave the check here as we don't want to do any of this logic 
-			if GetConvarInt('voice_enableUi', 1) == 1 then
-				local curTalkingStatus = MumbleIsPlayerTalking(PlayerId()) == 1
-				if lastRadioStatus ~= radioPressed or lastTalkingStatus ~= curTalkingStatus then
-					lastRadioStatus = radioPressed
-					lastTalkingStatus = curTalkingStatus
-					sendUIMessage({
-						usingRadio = lastRadioStatus,
-						talking = lastTalkingStatus
-					})
-				end
+			local curTalkingStatus = MumbleIsPlayerTalking(PlayerId()) == 1
+			if lastRadioStatus ~= radioPressed or lastTalkingStatus ~= curTalkingStatus then
+				lastRadioStatus = radioPressed
+				lastTalkingStatus = curTalkingStatus
+				sendUIMessage({
+					usingRadio = lastRadioStatus,
+					talking = lastTalkingStatus
+				})
+				exports["familie_widget"]:SetWidgetData('talking', lastTalkingStatus)
+				exports["familie_widget"]:SetWidgetData('radioTalking', lastRadioStatus)
 			end
 	
 			if voiceState == "proximity" then
