@@ -249,7 +249,7 @@ p {
 	font-family: sans-serif;
 	font-weight: bold;
 	color: rgb(255, 255, 255);
-	background-color: rgba(39, 39, 39, 0.2);
+	/* background-color: rgba(39, 39, 39, 0.2); */
 	font-size: 0.7vw;
 	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }

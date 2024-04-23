@@ -26,14 +26,14 @@ function syncRadioData(playerData, radioTable, localPlyRadioName)
 		showPlayers = true
 	end
 
-	if ESX.Game.CheckHasItem('fam_radio', 1) then
+	if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
 		showPlayers = true
 	end
 
 	if showPlayers then
 		for playerId, player in pairs(playerData) do
 			if playerId ~= playerServerId then
-				if ESX.Game.CheckHasItem('fam_radio', 1) then
+				if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
 					radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
 				else
 					if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' or player.job == 'tc' then
@@ -85,12 +85,12 @@ function addPlayerToRadio(plySource, plyRadioName, plyData)
 		showPlayers = true
 	end
 
-	if ESX.Game.CheckHasItem('fam_radio', 1) then
+	if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
 		showPlayers = true
 	end
 
 	if showPlayers then
-		if ESX.Game.CheckHasItem('fam_radio', 1) then
+		if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
 			radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
 		else
 			if plyData.job == 'police' or plyData.job == 'ambulance' or plyData.job == 'fbi' or plyData.job == 'tc' then
