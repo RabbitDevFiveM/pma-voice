@@ -147,7 +147,7 @@ export default {
 				data.radioPlayers.map(p => {
 					let listItem = document.createElement("div");
 					listItem.id = "voip-radio-list-item-" + p.radioId;
-					listItem.textContent = p.radioName + ' ' + (data.self ? "\uD83D\uDD38" : "\uD83D\uDD39");
+					listItem.textContent = (data.self ? "\uD83D\uDD38" : "\uD83D\uDD39") + ' ' + p.radioName;
 
 					radioListElem.appendChild(listItem);
 				})
@@ -170,7 +170,7 @@ export default {
 					let listItem = document.createElement("div");
 
 					listItem.id = "voip-radio-list-item-" + data.radioId;
-					listItem.textContent = data.radioName + ' ' + (data.self ? "\uD83D\uDD38" : "\uD83D\uDD39");
+					listItem.textContent = (data.self ? "\uD83D\uDD38" : "\uD83D\uDD39") + ' ' + data.radioName;
 
 					radioListElem.appendChild(listItem);
 				} else if (data.radioTalking != null) {
@@ -244,7 +244,7 @@ p {
 	position: absolute;
 	top: 140px;
 	right: 0%;
-	text-align: right;
+	text-align: left;
 	padding: 6px;
 	font-family: sans-serif;
 	font-weight: bold;
