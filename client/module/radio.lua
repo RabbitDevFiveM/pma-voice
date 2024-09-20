@@ -56,6 +56,10 @@ function RefreshList()
 	for playerId, player in pairs(radioPlayers) do
 		table.insert(data, { radioId= player.radioId, radioName = player.radioName })
 	end
+	-- for i = 1, 10, 1 do
+	-- 	table.insert(data, { radioId= i, radioName = "Sandeee janangkansss21de "..i })
+	-- end
+	-- print(ESX.DumpTable(data))
 	sendUIMessage({ radioPlayers = data }) -- Add player to radio list
 end
 
