@@ -138,7 +138,7 @@ export default {
 					let listHeader = document.createElement("div");
 
 					listHeader.id = "voip-radio-list-header";
-					listHeader.textContent = "\uD83D\uDCE1Familie City - Radio List";
+					listHeader.textContent = "\uD83D\uDCE1Radio List";
 					listHeader.style.textDecorationLine = "underline";
 
 					radioListElem.appendChild(listHeader);
