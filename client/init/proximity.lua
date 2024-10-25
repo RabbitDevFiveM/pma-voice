@@ -95,9 +95,7 @@ Citizen.CreateThread(function()
 	while true do
 		-- wait for mumble to reconnect
 		while not MumbleIsConnected() do
-			SendNUIMessage({ warningMsg = "โปรดตรวจสอบระบบเสียงของคุณ" })
 			Wait(100)
-			SendNUIMessage({ warningMsg = "" })
 		end
 
 		if not playerMuted then
@@ -110,8 +108,8 @@ Citizen.CreateThread(function()
 					usingRadio = lastRadioStatus,
 					talking = lastTalkingStatus
 				})
-				exports["familie_widget"]:SetWidgetData('talking', lastTalkingStatus)
-				exports["familie_widget"]:SetWidgetData('radioTalking', lastRadioStatus)
+				exports["familie_hud"]:SetWidgetData('talking', lastTalkingStatus)
+				exports["familie_hud"]:SetWidgetData('radioTalking', lastRadioStatus)
 			end
 	
 			if voiceState == "proximity" then
