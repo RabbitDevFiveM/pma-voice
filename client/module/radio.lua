@@ -21,25 +21,8 @@ function syncRadioData(playerData, radioTable, localPlyRadioName)
 		end
 	end
 	radioPlayers = {}
-	local showPlayers = false
-	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' or ESX.PlayerData.job.name == 'tc' then
-		showPlayers = true
-	end
-
-	if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
-		showPlayers = true
-	end
-
-	if showPlayers then
-		for playerId, player in pairs(playerData) do
-			if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
-				radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
-			else
-				if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' or player.job == 'tc' then
-					radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
-				end
-			end
-		end
+	for playerId, player in pairs(playerData) do
+		radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
 	end
 	if GetConvarInt("voice_syncPlayerNames", 0) == 1 then
 		radioNames[playerServerId] = localPlyRadioName
@@ -49,7 +32,7 @@ end
 RegisterNetEvent('pma-voice:syncRadioData', syncRadioData)
 
 function RefreshList()
-	sendUIMessage({ clearRadio = true })
+	-- sendUIMessage({ clearRadio = true })
 	local data = {}
 	for _, player in pairs(radioPlayers) do
 		table.insert(data, { radioId= player.radioId, radioName = player.radioName })
@@ -70,7 +53,7 @@ function setTalkingOnRadio(plySource, enabled)
 	toggleVoice(plySource, enabled, 'radio')
 	radioData[plySource] = enabled
 	playMicClicks(enabled)
-	sendUIMessage({ radioId = plySource, radioTalking = enabled }) -- Add player to radio list
+	-- sendUIMessage({ radioId = plySource, radioTalking = enabled }) -- Add player to radio list
 	exports["f_radio_list"]:setTalkingOnRadio({ radioId = plySource, radioTalking = enabled })
 end
 RegisterNetEvent('pma-voice:setTalkingOnRadio', setTalkingOnRadio)
@@ -84,24 +67,7 @@ function addPlayerToRadio(plySource, plyRadioName, plyData)
 		radioNames[plySource] = plyRadioName
 	end
 
-	local showPlayers = false
-	if ESX.PlayerData.job and ESX.PlayerData.job.name == 'ambulance' or ESX.PlayerData.job.name == 'police' or ESX.PlayerData.job.name == 'fbi' or ESX.PlayerData.job.name == 'tc' then
-		showPlayers = true
-	end
-
-	if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
-		showPlayers = true
-	end
-
-	if showPlayers then
-		if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
-			radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
-		else
-			if plyData.job == 'police' or plyData.job == 'ambulance' or plyData.job == 'fbi' or plyData.job == 'tc' then
-				radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
-			end
-		end
-	end
+	radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
 
 	RefreshList()
 	if radioPressed then
@@ -151,17 +117,17 @@ RegisterNetEvent('pma-voice:removePlayerFromRadio', removePlayerFromRadio)
 function setRadioChannel(channel)
 	if channel == 0 then
 		exports["f_radio_list"]:OpenRadio(false)
-		sendUIMessage({ clearRadio = true })
+		-- sendUIMessage({ clearRadio = true })
 	end
 	exports["f_radio_list"]:SetRadioChannel(channel)
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
 	type_check({channel, "number"})
 	TriggerServerEvent('pma-voice:setPlayerRadio', channel)
 	radioChannel = channel
-	sendUIMessage({
-		radioChannel = channel,
-		radioEnabled = radioEnabled
-	})
+	-- sendUIMessage({
+	-- 	radioChannel = channel,
+	-- 	radioEnabled = radioEnabled
+	-- })
 end
 
 --- exports setRadioChannel
