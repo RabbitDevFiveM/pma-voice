@@ -32,13 +32,11 @@ function syncRadioData(playerData, radioTable, localPlyRadioName)
 
 	if showPlayers then
 		for playerId, player in pairs(playerData) do
-			if playerId ~= playerServerId then
-				if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
+			if ESX.Game.CheckHasItem('fam_radio', 1) or ESX.Game.CheckHasItem('allstar_radio', 1) then
+				radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
+			else
+				if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' or player.job == 'tc' then
 					radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
-				else
-					if player.job == 'police' or player.job == 'ambulance' or player.job == 'fbi' or player.job == 'tc' then
-						radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
-					end
 				end
 			end
 		end
@@ -53,10 +51,15 @@ RegisterNetEvent('pma-voice:syncRadioData', syncRadioData)
 function RefreshList()
 	sendUIMessage({ clearRadio = true })
 	local data = {}
-	for playerId, player in pairs(radioPlayers) do
+	for _, player in pairs(radioPlayers) do
 		table.insert(data, { radioId= player.radioId, radioName = player.radioName })
 	end
-	sendUIMessage({ radioPlayers = data }) -- Add player to radio list
+	-- for i = 1, 40, 1 do
+	-- 	table.insert(data, { radioId= 1, radioName = "test test test "..i})
+	-- end
+	-- sendUIMessage({ radioPlayers = data }) -- Add player to radio list
+	exports["f_radio_list"]:OpenRadio(true)
+	exports["f_radio_list"]:RadioPlayers(data)
 end
 
 --- event setTalkingOnRadio
@@ -68,6 +71,7 @@ function setTalkingOnRadio(plySource, enabled)
 	radioData[plySource] = enabled
 	playMicClicks(enabled)
 	sendUIMessage({ radioId = plySource, radioTalking = enabled }) -- Add player to radio list
+	exports["f_radio_list"]:setTalkingOnRadio({ radioId = plySource, radioTalking = enabled })
 end
 RegisterNetEvent('pma-voice:setTalkingOnRadio', setTalkingOnRadio)
 
@@ -146,8 +150,10 @@ RegisterNetEvent('pma-voice:removePlayerFromRadio', removePlayerFromRadio)
 ---@param channel number the channel to set the player to, or 0 to remove them.
 function setRadioChannel(channel)
 	if channel == 0 then
+		exports["f_radio_list"]:OpenRadio(false)
 		sendUIMessage({ clearRadio = true })
 	end
+	exports["f_radio_list"]:SetRadioChannel(channel)
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
 	type_check({channel, "number"})
 	TriggerServerEvent('pma-voice:setPlayerRadio', channel)
@@ -197,13 +203,13 @@ end
 RegisterCommand('+radiotalk', function()
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
 	if isDead() then return end
-
 	if not radioPressed and radioEnabled then
 		if radioChannel > 0 then
 			logger.info('[radio] Start broadcasting, update targets and notify server.')
 			playerTargets(radioData, MumbleIsPlayerTalking(PlayerId()) and callData or {})
 			TriggerServerEvent('pma-voice:setTalkingOnRadio', true)
 			radioPressed = true
+			exports["f_radio_list"]:setTalkingOnRadio({ radioId = playerServerId, radioTalking = true })
 			playMicClicks(true)
 			if GetConvarInt('voice_enableRadioAnim', 0) == 1 and not (GetConvarInt('voice_disableVehicleRadioAnim', 0) == 1 and IsPedInAnyVehicle(PlayerPedId(), false)) then
 				RequestAnimDict('random@arrests')
@@ -236,6 +242,7 @@ RegisterCommand('-radiotalk', function()
 			StopAnimTask(PlayerPedId(), "random@arrests", "generic_radio_enter", -4.0)
 		end
 		TriggerServerEvent('pma-voice:setTalkingOnRadio', false)
+		exports["f_radio_list"]:setTalkingOnRadio({ radioId = playerServerId, radioTalking = false })
 	end
 end, false)
 if gameVersion == 'fivem' then
