@@ -168,7 +168,9 @@ end
 
 RegisterCommand('+radiotalk', function()
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
-	if isDead() then return end
+	if isDead() or exports["esx_policejob"]:GetHandcuffed() then
+		return
+	end
 	if not radioPressed and radioEnabled then
 		if radioChannel > 0 then
 			logger.info('[radio] Start broadcasting, update targets and notify server.')
@@ -191,6 +193,18 @@ RegisterCommand('+radiotalk', function()
 					SetControlNormal(0, 249, 1.0)
 					SetControlNormal(1, 249, 1.0)
 					SetControlNormal(2, 249, 1.0)
+					if radioPressed and exports["esx_policejob"]:GetHandcuffed() then
+						radioPressed = false
+						MumbleClearVoiceTargetPlayers(voiceTarget)
+						playerTargets(MumbleIsPlayerTalking(PlayerId()) and callData or {})
+						TriggerEvent("pma-voice:radioActive", false)
+						playMicClicks(false)
+						if GetConvarInt('voice_enableRadioAnim', 0) == 1 then
+							StopAnimTask(PlayerPedId(), "random@arrests", "generic_radio_enter", -4.0)
+						end
+						TriggerServerEvent('pma-voice:setTalkingOnRadio', false)
+						exports["f_radio_list"]:setTalkingOnRadio({ radioId = playerServerId, radioTalking = false })
+					end
 				end
 			end)
 		end
