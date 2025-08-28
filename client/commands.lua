@@ -12,6 +12,84 @@ Citizen.CreateThread(function ()
 
 end)
 
+-- === ตั้งค่าโทนสี/สไตล์ต่อโหมด (แก้ไขได้) ===
+-- โหมดนับตาม index ของ Cfg.voiceModes (1..#)
+local VoiceModeStyles = {
+    [1] = { r = 80,  g = 200, b = 255, label = "Whisper"    }, -- กระซิบ
+    [2] = { r = 60,  g = 255, b = 120, label = "Normal"     }, -- ปกติ
+    [3] = { r = 255, g = 180, b = 60,  label = "Shout"      }, -- ตะโกน
+    [4] = { r = 200, g = 120, b = 255, label = "Dome"       }, -- Dome
+    [5] = { r = 255, g = 70,  b = 70,  label = "Microphone" }, -- ไมค์
+    [6] = { r = 255, g = 120, b = 40,  label = "Megaphone"  }, -- เมก้าโฟน
+    [7] = { r = 255, g = 255, b = 255, label = "God"        }, -- Admin/GM
+}
+
+-- ป้องกันซ้อนเธรดวาดวง
+local _voiceRingThread = nil
+local _voiceRingThreadId = 0
+
+-- แสดงวงรัศมีเสียง (พัลส์ 2 วินาที)
+local function ShowVoiceRangeRing(rangeMeters, modeIndex)
+    _voiceRingThreadId = _voiceRingThreadId + 1
+    local myId = _voiceRingThreadId
+
+    local style = VoiceModeStyles[modeIndex] or { r = 120, g = 200, b = 255, label = "Voice" }
+    local durationMs = 2000
+    local startAt = GetGameTimer()
+
+    -- เธรดวาดวง
+    Citizen.CreateThread(function()
+        while GetGameTimer() - startAt < durationMs and myId == _voiceRingThreadId do
+            local ped = PlayerPedId()
+            local coords = GetEntityCoords(ped)
+
+            -- พัลส์ความทึบ + ขยาย/หดเล็กน้อย
+            local now = GetGameTimer()
+            local t = (now - startAt)
+            local alpha = math.floor(90 + 65 * math.sin(t / 200.0))      -- 25Hz-ish pulse
+            local scalePulse = 1.0 + 0.08 * math.sin(t / 300.0)          -- ขยาย/หด 8%
+
+            -- วาดเป็นทรงกระบอกเตี้ย ๆ ที่พื้นให้เหมือน “วงรัศมี”
+            -- ใช้ DrawMarker แบบ cylinder (สเกล X,Y = เส้นผ่านศูนย์กลาง)
+            DrawMarker(
+                1,                              -- MarkerTypeCylinder (ดูเป็นวง)
+                coords.x, coords.y, coords.z - 1.0,
+                0.0, 0.0, 0.0,                  -- direction
+                0.0, 0.0, 0.0,                  -- rotation
+                rangeMeters * 2.0 * scalePulse, -- scale X
+                rangeMeters * 2.0 * scalePulse, -- scale Y
+                0.35,                           -- scale Z (หนาเตี้ย)
+                style.r, style.g, style.b, alpha,
+                false, false, 2, false, nil, nil, false
+            )
+
+            -- วงชั้นนอกบาง ๆ ให้เด่นขึ้น (เหมือนขอบ)
+            DrawMarker(
+                1,
+                coords.x, coords.y, coords.z - 1.01,
+                0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0,
+                rangeMeters * 2.0 * (scalePulse + 0.03),
+                rangeMeters * 2.0 * (scalePulse + 0.03),
+                0.02,
+                style.r, style.g, style.b, math.min(alpha + 40, 180),
+                false, false, 2, false, nil, nil, false
+            )
+
+            -- (ออปชั่น) แสดง 3D text ชื่อโหมดตรงกลาง
+            -- ถ้าไม่อยากให้แสดงก็คอมเมนต์ทิ้งได้
+            -- SetDrawOrigin(coords.x, coords.y, coords.z + 0.95, 0)
+            -- SetTextFont(4); SetTextScale(0.30, 0.30); SetTextProportional(1)
+            -- SetTextColour(style.r, style.g, style.b, 200); SetTextOutline()
+            -- SetTextEntry("STRING"); AddTextComponentString(style.label or "Voice")
+            -- DrawText(0.0, 0.0)
+            -- ClearDrawOrigin()
+
+            Citizen.Wait(0)
+        end
+    end)
+end
+
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
 	ESX.PlayerData = xPlayer
@@ -156,8 +234,13 @@ function changeMode()
 			mode = 1
 		end
 
+		local range = Cfg.voiceModes[mode][1]
 		setProximityState(Cfg.voiceModes[mode][1], false)
 		TriggerEvent('pma-voice:setTalkingMode', mode)
+
+		
+		-- ⭐ แสดงวงรอบตัวเป็นเวลา ~2 วิ (พัลส์ + สีตามโหมด)
+		ShowVoiceRangeRing(range, mode)
 	end
 end
 
@@ -203,5 +286,5 @@ RegisterCommand('cycleproximity', function()
 	changeMode()
 end, false)
 if gameVersion == 'fivem' then
-	RegisterKeyMapping('cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'F11'))
+	RegisterKeyMapping('cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'Z'))
 end
