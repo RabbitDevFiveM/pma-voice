@@ -27,8 +27,23 @@ local VoiceModeStyles = {
 -- ป้องกันซ้อนเธรดวาดวง
 local _voiceRingThread = nil
 local _voiceRingThreadId = 0
+-- === helpers ===
+local function _findGroundZ(pos)
+    local probes = { 50.0, 40.0, 30.0, 20.0, 10.0, 5.0, 3.0, 2.0, 1.0, 0.0 }
+    for _, h in ipairs(probes) do
+        local ok, gz = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z + h, false)
+        if ok then return gz end
+    end
+    return nil
+end
 
--- แสดงวงรัศมีเสียง (พัลส์ 2 วินาที)
+local function _easeOutCubic(x)
+    -- clamp 0..1
+    if x < 0.0 then x = 0.0 elseif x > 1.0 then x = 1.0 end
+    return 1.0 - ((1.0 - x) ^ 3)
+end
+
+-- === main ===
 local function ShowVoiceRangeRing(rangeMeters, modeIndex)
     _voiceRingThreadId = _voiceRingThreadId + 1
     local myId = _voiceRingThreadId
@@ -37,53 +52,67 @@ local function ShowVoiceRangeRing(rangeMeters, modeIndex)
     local durationMs = 2000
     local startAt = GetGameTimer()
 
-    -- เธรดวาดวง
     Citizen.CreateThread(function()
         while GetGameTimer() - startAt < durationMs and myId == _voiceRingThreadId do
-            local ped = PlayerPedId()
-            local coords = GetEntityCoords(ped)
+            local ped   = PlayerPedId()
+            local pos   = GetEntityCoords(ped)
 
-            -- พัลส์ความทึบ + ขยาย/หดเล็กน้อย
-            local now = GetGameTimer()
-            local t = (now - startAt)
-            local alpha = math.floor(90 + 65 * math.sin(t / 200.0))      -- 25Hz-ish pulse
-            local scalePulse = 1.0 + 0.08 * math.sin(t / 300.0)          -- ขยาย/หด 8%
+            -- 1) baseZ: ระดับพื้นจริง (ถ้าไม่เจอ ใช้ pos.z - 1.0)
+            local gz    = _findGroundZ(pos)
+            local baseZ = (gz and (gz + 0.05)) or (pos.z - 1.0)
 
-            -- วาดเป็นทรงกระบอกเตี้ย ๆ ที่พื้นให้เหมือน “วงรัศมี”
-            -- ใช้ DrawMarker แบบ cylinder (สเกล X,Y = เส้นผ่านศูนย์กลาง)
-            DrawMarker(
-                1,                              -- MarkerTypeCylinder (ดูเป็นวง)
-                coords.x, coords.y, coords.z - 1.0,
-                0.0, 0.0, 0.0,                  -- direction
-                0.0, 0.0, 0.0,                  -- rotation
-                rangeMeters * 2.0 * scalePulse, -- scale X
-                rangeMeters * 2.0 * scalePulse, -- scale Y
-                0.35,                           -- scale Z (หนาเตี้ย)
-                style.r, style.g, style.b, alpha,
-                false, false, 2, false, nil, nil, false
-            )
+            -- 2) ยกวงเมื่ออยู่ในรถ (adaptive ตามความสูงใต้ท้องรถ)
+            local drawZ = baseZ
+            if IsPedInAnyVehicle(ped, false) then
+                local veh = GetVehiclePedIsIn(ped, false)
+                if veh ~= 0 then
+                    local clearance = GetEntityHeightAboveGround(veh) or 0.0
+                    local margin    = 0.25
+                    local maxLift   = 1.6
+                    local targetLift = math.min(maxLift, clearance + margin)
 
-            -- วงชั้นนอกบาง ๆ ให้เด่นขึ้น (เหมือนขอบ)
+                    -- easing 300ms แรก ให้นุ่ม
+                    local elapsed   = GetGameTimer() - startAt
+                    local ease      = _easeOutCubic(elapsed / 300.0)
+                    drawZ = baseZ + (targetLift * ease)
+
+                    -- กรณีหา ground ไม่เจอเลย (interior แปลก ๆ): ยกคงที่พอประมาณ
+                    if not gz then
+                        drawZ = (pos.z - 0.4) + (0.6 * ease)
+                    end
+                end
+            end
+
+            -- 3) เอฟเฟกต์พัลส์ (ทึบ+สเกล)
+            local t        = (GetGameTimer() - startAt)
+            local alpha    = math.floor(90 + 65 * math.sin(t / 200.0))
+            local scaleMul = 1.0 + 0.08 * math.sin(t / 300.0)
+
+            -- 4) วาดวงหลัก (ทรงกระบอกเตี้ย ๆ)
             DrawMarker(
                 1,
-                coords.x, coords.y, coords.z - 1.01,
-                0.0, 0.0, 0.0,
-                0.0, 0.0, 0.0,
-                rangeMeters * 2.0 * (scalePulse + 0.03),
-                rangeMeters * 2.0 * (scalePulse + 0.03),
-                0.02,
-                style.r, style.g, style.b, math.min(alpha + 40, 180),
-                false, false, 2, false, nil, nil, false
+                pos.x, pos.y, drawZ,
+                0.0, 0.0, 0.0,            -- dir
+                0.0, 0.0, 0.0,            -- rot
+                rangeMeters * 2.0 * scaleMul,
+                rangeMeters * 2.0 * scaleMul,
+                0.35,
+                style.r, style.g, style.b, alpha,
+                false, true, 2, false, nil, nil, false
             )
 
-            -- (ออปชั่น) แสดง 3D text ชื่อโหมดตรงกลาง
-            -- ถ้าไม่อยากให้แสดงก็คอมเมนต์ทิ้งได้
-            -- SetDrawOrigin(coords.x, coords.y, coords.z + 0.95, 0)
-            -- SetTextFont(4); SetTextScale(0.30, 0.30); SetTextProportional(1)
-            -- SetTextColour(style.r, style.g, style.b, 200); SetTextOutline()
-            -- SetTextEntry("STRING"); AddTextComponentString(style.label or "Voice")
-            -- DrawText(0.0, 0.0)
-            -- ClearDrawOrigin()
+            -- 5) วาดขอบวง (บางกว่า/ทึบขึ้นนิดหน่อย)
+            DrawMarker(
+                1,
+                pos.x, pos.y, drawZ - 0.01,
+                0.0, 0.0, 0.0,
+                0.0, 0.0, 0.0,
+                rangeMeters * 2.0 * (scaleMul + 0.03),
+                rangeMeters * 2.0 * (scaleMul + 0.03),
+                0.02,
+                style.r, style.g, style.b, math.min(alpha + 40, 180),
+                false, true, 2, false, nil, nil, false
+            )
 
             Citizen.Wait(0)
         end
