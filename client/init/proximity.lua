@@ -110,10 +110,10 @@ Citizen.CreateThread(function()
 					usingRadio = lastRadioStatus,
 					talking = lastTalkingStatus
 				})
-				exports["familie_widget"]:SetWidgetData('talking', lastTalkingStatus)
-				exports["familie_widget"]:SetWidgetData('radioTalking', lastRadioStatus)
+				pcall(function ()
+					exports["familie_hud"]:SetWidgetData('talking', lastTalkingStatus)
+				end)
 			end
-	
 			if voiceState == "proximity" then
 				addNearbyPlayers()
 				local isSpectating = NetworkIsInSpectatorMode()

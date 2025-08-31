@@ -177,7 +177,6 @@ function setVoiceProperty(type, value)
 		sendUIMessage({
 			radioEnabled = value
 		})
-		exports["familie_widget"]:SetWidgetData('radioEnabled', value)
 	elseif type == "micClicks" then
 		local val = tostring(value)
 		micClicks = val
