@@ -185,7 +185,7 @@ AddEventHandler('mumble:SetMute', function(status)
 			Mute()
 		end
 	else
-		if playerMuted then
+		if playerMuted and not adamantineZone then
 			Mute()
 		end
 	end
