@@ -108,8 +108,8 @@ Citizen.CreateThread(function()
 					usingRadio = lastRadioStatus,
 					talking = lastTalkingStatus
 				})
-				exports["familie_hud"]:SetWidgetData('talking', lastTalkingStatus)
-				exports["familie_hud"]:SetWidgetData('radioTalking', lastRadioStatus)
+				exports["f_hud"]:SetWidgetData('talking', lastTalkingStatus)
+				exports["f_hud"]:SetWidgetData('radioTalking', lastRadioStatus)
 			end
 	
 			if voiceState == "proximity" then

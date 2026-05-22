@@ -96,7 +96,7 @@ function Mute()
 		SendNUIMessage({
 			voiceMode = 'Muted'
 		})
-		exports["familie_hud"]:SetWidgetData('voiceMode', 'Muted')
+		exports["f_hud"]:SetWidgetData('voiceMode', 'Muted')
 	else
 		local voiceMode = 2
 		local voiceModeData = Cfg.voiceModes[voiceMode]
@@ -112,7 +112,7 @@ function Mute()
 			voiceMode = voiceMode - 1
 		})
 
-		exports["familie_hud"]:SetWidgetData('voiceMode', voiceModeData[2])
+		exports["f_hud"]:SetWidgetData('voiceMode', voiceModeData[2])
 		
 		setProximityState(Cfg.voiceModes[mode][1], false)
 		TriggerEvent('pma-voice:setTalkingMode', voiceMode)
@@ -179,7 +179,7 @@ function setProximityState(proximityRange, isCustom)
 		voiceMode = isCustom and #Cfg.voiceModes or mode - 1
 	})
 
-	exports["familie_hud"]:SetWidgetData('voiceMode', isCustom and "Custom" or voiceModeData[2])
+	exports["f_hud"]:SetWidgetData('voiceMode', isCustom and "Custom" or voiceModeData[2])
 end
 
 exports("overrideProximityRange", function(range, disableCycle)
