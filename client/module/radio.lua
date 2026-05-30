@@ -24,6 +24,7 @@ function syncRadioData(radioTable, localPlyRadioName)
 		print('-----------------------------')
 	end
 
+<<<<<<< Updated upstream
 	local isEnabled = isRadioEnabled()
 
 	if isEnabled then
@@ -34,12 +35,39 @@ function syncRadioData(radioTable, localPlyRadioName)
 		radioChannel = radioChannel,
 		radioEnabled = isEnabled
 	})
+=======
+	for tgt, enabled in pairs(radioTable) do
+		if tgt ~= playerServerId then
+			toggleVoice(tgt, enabled, 'radio')
+		end
+	end
+	radioPlayers = {}
+	for playerId, player in pairs(playerData) do
+		radioPlayers[playerId] = { radioId = playerId, radioName = player["name"] }
+	end
+>>>>>>> Stashed changes
 	if GetConvarInt("voice_syncPlayerNames", 0) == 1 then
 		radioNames[playerServerId] = localPlyRadioName
 	end
 end
 
+<<<<<<< Updated upstream
 RegisterNetEvent('pma-voice:syncRadioData', syncRadioData)
+=======
+function RefreshList()
+	-- sendUIMessage({ clearRadio = true })
+	local data = {}
+	for _, player in pairs(radioPlayers) do
+		table.insert(data, { radioId= player.radioId, radioName = player.radioName })
+	end
+	-- for i = 1, 40, 1 do
+	-- 	table.insert(data, { radioId= 1, radioName = "test test test "..i})
+	-- end
+	-- sendUIMessage({ radioPlayers = data }) -- Add player to radio list
+	exports["f_radio_list"]:OpenRadio(true)
+	exports["f_radio_list"]:RadioPlayers(data)
+end
+>>>>>>> Stashed changes
 
 --- event setTalkingOnRadio
 --- sets the players talking status, triggered when a player starts/stops talking.
@@ -53,6 +81,11 @@ function setTalkingOnRadio(plySource, enabled)
 	local enabled = enabled or callData[plySource]
 	toggleVoice(plySource, enabled, 'radio')
 	playMicClicks(enabled)
+<<<<<<< Updated upstream
+=======
+	-- sendUIMessage({ radioId = plySource, radioTalking = enabled }) -- Add player to radio list
+	exports["f_radio_list"]:setTalkingOnRadio({ radioId = plySource, radioTalking = enabled })
+>>>>>>> Stashed changes
 end
 RegisterNetEvent('pma-voice:setTalkingOnRadio', setTalkingOnRadio)
 
@@ -64,8 +97,15 @@ function addPlayerToRadio(plySource, plyRadioName)
 	if GetConvarInt("voice_syncPlayerNames", 0) == 1 then
 		radioNames[plySource] = plyRadioName
 	end
+<<<<<<< Updated upstream
 	logger.info('[radio] %s joined radio %s %s', plySource, radioChannel,
 		radioPressed and " while we were talking, adding them to targets" or "")
+=======
+
+	radioPlayers[plyData["playerId"]] = { radioId = plyData["playerId"], radioName = plyData["name"] }
+
+	RefreshList()
+>>>>>>> Stashed changes
 	if radioPressed then
 		addVoiceTargets(radioData, callData)
 	end
@@ -116,10 +156,25 @@ end)
 --- sets the local players current radio channel and updates the server
 ---@param channel number the channel to set the player to, or 0 to remove them.
 function setRadioChannel(channel)
+<<<<<<< Updated upstream
+=======
+	if channel == 0 then
+		exports["f_radio_list"]:OpenRadio(false)
+		-- sendUIMessage({ clearRadio = true })
+	end
+	exports["f_radio_list"]:SetRadioChannel(channel)
+>>>>>>> Stashed changes
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
 	type_check({ channel, "number" })
 	TriggerServerEvent('pma-voice:setPlayerRadio', channel)
 	radioChannel = channel
+<<<<<<< Updated upstream
+=======
+	-- sendUIMessage({
+	-- 	radioChannel = channel,
+	-- 	radioEnabled = radioEnabled
+	-- })
+>>>>>>> Stashed changes
 end
 
 --- exports setRadioChannel
@@ -188,15 +243,26 @@ end
 
 RegisterCommand('+radiotalk', function()
 	if GetConvarInt('voice_enableRadios', 1) ~= 1 then return end
+<<<<<<< Updated upstream
 	if isDead() then return end
 	if not isRadioEnabled() then return end
 	if not radioPressed then
+=======
+	if isDead() or exports["esx_policejob"]:GetHandcuffed() then
+		return
+	end
+	if not radioPressed and radioEnabled then
+>>>>>>> Stashed changes
 		if radioChannel > 0 then
 			logger.info('[radio] Start broadcasting, update targets and notify server.')
 			addVoiceTargets(radioData, callData)
 			TriggerServerEvent('pma-voice:setTalkingOnRadio', true)
 			radioPressed = true
+<<<<<<< Updated upstream
 			local shouldPlayAnimation = isRadioAnimEnabled()
+=======
+			exports["f_radio_list"]:setTalkingOnRadio({ radioId = playerServerId, radioTalking = true })
+>>>>>>> Stashed changes
 			playMicClicks(true)
 			-- localize here so in the off case someone changes this while its in use we
 			-- still remove our dictionary down below here
@@ -225,6 +291,7 @@ RegisterCommand('+radiotalk', function()
 					SetControlNormal(0, 249, 1.0)
 					SetControlNormal(1, 249, 1.0)
 					SetControlNormal(2, 249, 1.0)
+<<<<<<< Updated upstream
 					Wait(0)
 				end
 
@@ -235,6 +302,20 @@ RegisterCommand('+radiotalk', function()
 				end
 				if shouldPlayAnimation then
 					RemoveAnimDict(dict)
+=======
+					if radioPressed and exports["esx_policejob"]:GetHandcuffed() then
+						radioPressed = false
+						MumbleClearVoiceTargetPlayers(voiceTarget)
+						playerTargets(MumbleIsPlayerTalking(PlayerId()) and callData or {})
+						TriggerEvent("pma-voice:radioActive", false)
+						playMicClicks(false)
+						if GetConvarInt('voice_enableRadioAnim', 0) == 1 then
+							StopAnimTask(PlayerPedId(), "random@arrests", "generic_radio_enter", -4.0)
+						end
+						TriggerServerEvent('pma-voice:setTalkingOnRadio', false)
+						exports["f_radio_list"]:setTalkingOnRadio({ radioId = playerServerId, radioTalking = false })
+					end
+>>>>>>> Stashed changes
 				end
 			end)
 		else
@@ -255,6 +336,7 @@ RegisterCommand('-radiotalk', function()
 			StopAnimTask(PlayerPedId(), radioAnim.dict, radioAnim.anim, -4.0)
 		end
 		TriggerServerEvent('pma-voice:setTalkingOnRadio', false)
+		exports["f_radio_list"]:setTalkingOnRadio({ radioId = playerServerId, radioTalking = false })
 	end
 end, false)
 if gameVersion == 'fivem' then

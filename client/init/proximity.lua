@@ -154,8 +154,14 @@ CreateThread(function()
 	})
 	while true do
 		-- wait for mumble to reconnect
+<<<<<<< Updated upstream
 		while not MumbleIsConnected() or not isInitialized do
+=======
+		while not MumbleIsConnected() do
+			SendNUIMessage({ warningMsg = "โปรดตรวจสอบระบบเสียงของคุณ" })
+>>>>>>> Stashed changes
 			Wait(100)
+			SendNUIMessage({ warningMsg = "" })
 		end
 		-- Leave the check here as we don't want to do any of this logic
 		if GetConvarInt('voice_enableUi', 1) == 1 then
@@ -167,6 +173,21 @@ CreateThread(function()
 					usingRadio = lastRadioStatus,
 					talking = lastTalkingStatus
 				})
+<<<<<<< Updated upstream
+=======
+				pcall(function ()
+					exports["f_hud"]:SetWidgetData('talking', lastTalkingStatus)
+				end)
+			end
+			if voiceState == "proximity" then
+				addNearbyPlayers()
+				local isSpectating = NetworkIsInSpectatorMode()
+				if isSpectating and not isListenerEnabled then
+					setSpectatorMode(true)
+				elseif not isSpectating and isListenerEnabled then
+					setSpectatorMode(false)
+				end
+>>>>>>> Stashed changes
 			end
 		end
 

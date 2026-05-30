@@ -47,6 +47,7 @@ Entity = Entity
 if GetConvar('voice_useNativeAudio', 'false') == 'true' then
 	-- native audio distance seems to be larger then regular gta units
 	Cfg.voiceModes = {
+<<<<<<< Updated upstream
 		{ 1.5, "Whisper" }, -- Whisper speech distance in gta distance units
 		{ 3.0, "Normal" },  -- Normal speech distance in gta distance units
 		{ 6.0, "Shouting" } -- Shout speech distance in gta distance units
@@ -56,6 +57,23 @@ else
 		{ 3.0,  "Whisper" }, -- Whisper speech distance in gta distance units
 		{ 7.0,  "Normal" },  -- Normal speech distance in gta distance units
 		{ 15.0, "Shouting" } -- Shout speech distance in gta distance units
+=======
+        {0.8, "กระซิบ"},
+        {3.0, "ปกติ"},
+        {6.0, "ตะโกน"},
+        -- {300.0, "โดม"},
+		-- {60.0, "กิจกรรม"},
+        -- {500.0, "พระเจ้า"}
+	}
+else
+	Cfg.voiceModes = {
+        {2.1, "กระซิบ"},
+        {6.0, "ปกติ"},
+        {15.0, "ตะโกน"},
+		-- {300.0, "โดม"},
+		-- {60.0, "กิจกรรม"},
+        -- {500.0, "พระเจ้า"}
+>>>>>>> Stashed changes
 	}
 end
 

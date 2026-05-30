@@ -6,7 +6,10 @@ AddStateBagChangeHandler("submix", "", function(bagName, _, value)
 		return logger.warn("Player %s applied submix %s but it isn't valid",
 			tgtId, value)
 	end
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 	-- we don't want to reset submix if the player is talking on the radio
 	if not value then
 		if not radioData[tgtId] and not callData[tgtId] then
@@ -18,6 +21,7 @@ AddStateBagChangeHandler("submix", "", function(bagName, _, value)
 	logger.info("%s had their submix set to %s", tgtId, value)
 	MumbleSetSubmixForServerId(tgtId, submixIndicies[value])
 end)
+<<<<<<< Updated upstream
 
 RegisterNetEvent("onPlayerDropped", function(tgtId)
 	if not radioData[tgtId] and not callData[tgtId] then
@@ -25,3 +29,5 @@ RegisterNetEvent("onPlayerDropped", function(tgtId)
 		MumbleSetSubmixForServerId(tgtId, -1)
 	end
 end)
+=======
+>>>>>>> Stashed changes

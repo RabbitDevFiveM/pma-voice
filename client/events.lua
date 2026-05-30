@@ -47,3 +47,31 @@ end)
 AddEventHandler('pma-voice:settingsCallback', function(cb)
 	cb(Cfg)
 end)
+<<<<<<< Updated upstream
+=======
+
+local voiceResetDone = false 
+
+AddEventHandler('playerSpawned', function()
+    if not voiceResetDone then 
+        Wait(6000) 
+		ResetVoice()
+        voiceResetDone = true 
+    end
+end)
+
+function ResetVoice()
+	NetworkClearVoiceChannel()
+    NetworkSessionVoiceLeave()
+    Wait(50)
+    NetworkSetVoiceActive(false)
+    MumbleClearVoiceTarget(2)
+    Wait(1000)
+    MumbleSetVoiceTarget(2)
+    NetworkSetVoiceActive(true)
+end
+
+RegisterCommand('resetvoice', function()
+	ResetVoice()
+end)
+>>>>>>> Stashed changes
