@@ -61,13 +61,12 @@ function addPlayerToRadio(source, radioChannel)
 	local playerData = {}
 	local plyName = radioNameGetter(source)
 
-	local xPlayer = ESX.GetPlayerFromId(source)
-	local xName = radioNameGetter(source)
-	playerData[source] = { playerId = source, name = xName, job = xPlayer.job.name}
+	-- stock shape (ไม่ลาก ESX/job): f_interface mapPmaPlayers + pma client เองใช้แค่ radioId/name
+	-- การ index `xPlayer.job.name` ตอน ESX/xPlayer/job เป็น nil จะ throw → addPlayerToRadio พังก่อนถึง
+	-- syncRadioData (ล่าง) → ทั้งช่องไม่ได้รับรายชื่อ. ตัด job ทิ้งกัน crash + ตัด ESX dependency
+	playerData[source] = { playerId = source, name = plyName }
 	for player, _ in pairs(radioData[radioChannel]) do
-		local xPlayer = ESX.GetPlayerFromId(player)
-		local xName = radioNameGetter(player)
-		playerData[player] = { playerId = player, name = xName, job = xPlayer.job.name}
+		playerData[player] = { playerId = player, name = radioNameGetter(player) }
 		TriggerClientEvent('pma-voice:addPlayerToRadio', player, source, plyName, playerData[source])
 	end
 	voiceData[source] = voiceData[source] or defaultTable(source)
