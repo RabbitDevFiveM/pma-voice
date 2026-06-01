@@ -1,6 +1,3 @@
-
-local msgpack_pack_args = msgpack.pack_args
-
 local radioChecks = {}
 
 --- checks if the player can join the channel specified
@@ -29,22 +26,12 @@ function addChannelCheck(channel, cb)
 	radioChecks[channel] = cb
 	logger.info("%s added a check to channel %s", GetInvokingResource(), channel)
 end
-
 exports('addChannelCheck', addChannelCheck)
 
 local function radioNameGetter_orig(source)
 	return GetPlayerName(source)
 end
 local radioNameGetter = radioNameGetter_orig
-
---- triggers an event for all of the players in the table while only doing msgpack
---- serialization once
-local function triggerEventForRadioChannel(eventName, radioTbl, ...)
-		local payload = msgpack_pack_args(...)
-		for player, _ in pairs(radioTbl) do
-			TriggerClientEventInternal(eventName, player, payload, payload:len())
-		end
-end
 
 --- adds a check to the channel, function is expected to return a boolean of true or false
 ---@param cb function the function to execute the check on
@@ -56,33 +43,37 @@ function overrideRadioNameGetter(channel, cb)
 	radioNameGetter = cb
 	logger.info("%s added a check to channel %s", GetInvokingResource(), channel)
 end
-
 exports('overrideRadioNameGetter', overrideRadioNameGetter)
 
 --- adds a player to the specified radion channel
 ---@param source number the player to add to the channel
 ---@param radioChannel number the channel to set them to
----@return boolean wasAdded if the player was successfuly added to the radio channel, or if it failed.
 function addPlayerToRadio(source, radioChannel)
 	if not canJoinChannel(source, radioChannel) then
 		-- remove the player from the radio client side
-		TriggerClientEvent("pma-voice:radioChangeRejected", source)
-		TriggerClientEvent('pma-voice:removePlayerFromRadio', source, source)
-		return false
+		return TriggerClientEvent('pma-voice:removePlayerFromRadio', source, source)
 	end
 	logger.verbose('[radio] Added %s to radio %s', source, radioChannel)
 
 	-- check if the channel exists, if it does set the varaible to it
 	-- if not create it (basically if not radiodata make radiodata)
 	radioData[radioChannel] = radioData[radioChannel] or {}
+	local playerData = {}
 	local plyName = radioNameGetter(source)
-	triggerEventForRadioChannel('pma-voice:addPlayerToRadio', radioData[radioChannel], source, plyName)
+
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local xName = radioNameGetter(source)
+	playerData[source] = { playerId = source, name = xName, job = xPlayer.job.name}
+	for player, _ in pairs(radioData[radioChannel]) do
+		local xPlayer = ESX.GetPlayerFromId(player)
+		local xName = radioNameGetter(player)
+		playerData[player] = { playerId = player, name = xName, job = xPlayer.job.name}
+		TriggerClientEvent('pma-voice:addPlayerToRadio', player, source, plyName, playerData[source])
+	end
 	voiceData[source] = voiceData[source] or defaultTable(source)
 	voiceData[source].radio = radioChannel
 	radioData[radioChannel][source] = false
-	TriggerClientEvent('pma-voice:syncRadioData', source, radioData[radioChannel],
-		GetConvarInt("voice_syncPlayerNames", 0) == 1 and plyName)
-	return true
+	TriggerClientEvent('pma-voice:syncRadioData', source, playerData, radioData[radioChannel], GetConvarInt("voice_syncPlayerNames", 0) == 1 and plyName)
 end
 
 --- removes a player from the specified channel
@@ -91,7 +82,9 @@ end
 function removePlayerFromRadio(source, radioChannel)
 	logger.verbose('[radio] Removed %s from radio %s', source, radioChannel)
 	radioData[radioChannel] = radioData[radioChannel] or {}
-	triggerEventForRadioChannel('pma-voice:removePlayerFromRadio', radioData[radioChannel], source)
+	for player, _ in pairs(radioData[radioChannel]) do
+		TriggerClientEvent('pma-voice:removePlayerFromRadio', player, source)
+	end
 	radioData[radioChannel][source] = nil
 	voiceData[source] = voiceData[source] or defaultTable(source)
 	voiceData[source].radio = 0
@@ -110,10 +103,9 @@ function setPlayerRadio(source, _radioChannel)
 	if not radioChannel then
 		-- only full error if its sent from another server-side resource
 		if isResource then
-			error(("'radioChannel' expected 'number', got: %s"):format(type(_radioChannel)))
+			error(("'radioChannel' expected 'number', got: %s"):format(type(_radioChannel))) 
 		else
-			return logger.warn("%s sent a invalid radio, 'radioChannel' expected 'number', got: %s", source,
-				type(_radioChannel))
+			return logger.warn("%s sent a invalid radio, 'radioChannel' expected 'number', got: %s", source,type(_radioChannel))
 		end
 	end
 	if isResource then
@@ -121,18 +113,16 @@ function setPlayerRadio(source, _radioChannel)
 		-- changed
 		TriggerClientEvent('pma-voice:clSetPlayerRadio', source, radioChannel)
 	end
-	if radioChannel ~= 0 then
-		if plyVoice.radio > 0 then
-			removePlayerFromRadio(source, plyVoice.radio)
-		end
-		local wasAdded = addPlayerToRadio(source, radioChannel)
-		Player(source).state.radioChannel = wasAdded and radioChannel or 0
+	Player(source).state.radioChannel = radioChannel
+	if radioChannel ~= 0 and plyVoice.radio == 0 then
+		addPlayerToRadio(source, radioChannel)
 	elseif radioChannel == 0 then
 		removePlayerFromRadio(source, plyVoice.radio)
-		Player(source).state.radioChannel = 0
+	elseif plyVoice.radio > 0 then
+		removePlayerFromRadio(source, plyVoice.radio)
+		addPlayerToRadio(source, radioChannel)
 	end
 end
-
 exports('setPlayerRadio', setPlayerRadio)
 
 RegisterNetEvent('pma-voice:setPlayerRadio', function(radioChannel)
@@ -148,11 +138,15 @@ function setTalkingOnRadio(talking)
 	local radioTbl = radioData[plyVoice.radio]
 	if radioTbl then
 		radioTbl[source] = talking
-		logger.verbose('[radio] Set %s to talking: %s on radio %s', source, talking, plyVoice.radio)
-		triggerEventForRadioChannel('pma-voice:setTalkingOnRadio', radioTbl, source, talking)
+		logger.verbose('[radio] Set %s to talking: %s on radio %s',source, talking, plyVoice.radio)
+		for player, _ in pairs(radioTbl) do
+			if player ~= source then
+				TriggerClientEvent('pma-voice:setTalkingOnRadio', player, source, talking)
+				logger.verbose('[radio] Sync %s to let them know %s is %s',player, source, talking and 'talking' or 'not talking')
+			end
+		end
 	end
 end
-
 RegisterNetEvent('pma-voice:setTalkingOnRadio', setTalkingOnRadio)
 
 AddEventHandler("onResourceStop", function(resource)
@@ -161,20 +155,19 @@ AddEventHandler("onResourceStop", function(resource)
 		local functionResource = string.match(functionRef, resource)
 		if functionResource then
 			radioChecks[channel] = nil
-			logger.warn('Channel %s had its radio check removed because the resource that gave the checks stopped',
-				channel)
+			logger.warn('Channel %s had its radio check removed because the resource that gave the checks stopped', channel)
 		end
 	end
 
 	if type(radioNameGetter) == "table" then
 		local radioRef = radioNameGetter.__cfx_functionReference
 		if radioRef then
-			local isResource = string.match(radioRef, resource)
+			local isResource = string.match(functionRef, resource)
 			if isResource then
 				radioNameGetter = radioNameGetter_orig
-				logger.warn(
-					'Radio name getter is resetting to default because the resource that gave the cb got turned off')
+				logger.warn('Radio name getter is resetting to default because the resource that gave the cb got turned off')
 			end
 		end
 	end
+
 end)

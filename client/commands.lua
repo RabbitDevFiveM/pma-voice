@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 ESX = nil
 
 Citizen.CreateThread(function ()
@@ -131,37 +129,25 @@ AddEventHandler('esx:setJob', function(job)
 	ESX.PlayerData.job = job
 end)
 
->>>>>>> Stashed changes
 local wasProximityDisabledFromOverride = false
 disableProximityCycle = false
 RegisterCommand('setvoiceintent', function(source, args)
 	if GetConvarInt('voice_allowSetIntent', 1) == 1 then
 		local intent = args[1]
 		if intent == 'speech' then
-			MumbleSetAudioInputIntent(`speech`)
+			MumbleSetAudioInputIntent(GetHashKey('speech'))
 		elseif intent == 'music' then
-			MumbleSetAudioInputIntent(`music`)
+			MumbleSetAudioInputIntent(GetHashKey('music'))
 		end
 		LocalPlayer.state:set('voiceIntent', intent, true)
 	end
 end)
-TriggerEvent('chat:addSuggestion', '/setvoiceintent', 'Sets the players voice intent', {
-	{
-		name = "intent",
-		help = "speech is default and enables noise suppression & high pass filter, music disables both of these."
-	},
-})
 
 -- TODO: Better implementation of this?
 RegisterCommand('vol', function(_, args)
 	if not args[1] then return end
 	setVolume(tonumber(args[1]))
 end)
-<<<<<<< Updated upstream
-TriggerEvent('chat:addSuggestion', '/vol', 'Sets the radio/phone volume', {
-	{ name = "volume", help = "A range between 1-100 on how loud you want them to be" },
-})
-=======
 
 playerMuted = false
 IS_DEAD = false
@@ -267,17 +253,17 @@ function changeMode()
 			end
 		end
 
-		-- if newMode == 5 and (not ESX.Game.CheckHasItem('microphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
-		-- 	mode = 1
-		-- end
+		if newMode == 5 and (not ESX.Game.CheckHasItem('microphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
+			mode = 1
+		end
 
-		-- if newMode == 6 and (not ESX.Game.CheckHasItem('megaphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
-		-- 	mode = 1
-		-- end
+		if newMode == 6 and (not ESX.Game.CheckHasItem('megaphone', 1) and not ESX.Game.CheckHasItem('god', 1)) then
+			mode = 1
+		end
 	
-		-- if newMode == 7 and not ESX.Game.CheckHasItem('god', 1) then
-		-- 	mode = 1
-		-- end
+		if newMode == 7 and not ESX.Game.CheckHasItem('god', 1) then
+			mode = 1
+		end
 
 		local range = Cfg.voiceModes[mode][1]
 		setProximityState(Cfg.voiceModes[mode][1], false)
@@ -288,10 +274,9 @@ function changeMode()
 		ShowVoiceRangeRing(range, mode)
 	end
 end
->>>>>>> Stashed changes
 
 exports('setAllowProximityCycleState', function(state)
-	type_check({ state, "boolean" })
+	type_check({state, "boolean"})
 	disableProximityCycle = state
 end)
 
@@ -307,16 +292,13 @@ function setProximityState(proximityRange, isCustom)
 		-- JS expects this value to be - 1, "custom" voice is on the last index
 		voiceMode = isCustom and #Cfg.voiceModes or mode - 1
 	})
-<<<<<<< Updated upstream
-=======
 	pcall(function ()
 		exports["f_hud"]:SetWidgetData('voiceMode', isCustom and "Custom" or voiceModeData[2])
 	end)
->>>>>>> Stashed changes
 end
 
 exports("overrideProximityRange", function(range, disableCycle)
-	type_check({ range, "number" })
+	type_check({range, "number"})
 	setProximityState(range, true)
 	if disableCycle then
 		disableProximityCycle = true
@@ -333,44 +315,8 @@ exports("clearProximityOverride", function()
 end)
 
 RegisterCommand('cycleproximity', function()
-	-- Proximity is either disabled, or manually overwritten.
-	if GetConvarInt('voice_enableProximityCycle', 1) ~= 1 or disableProximityCycle then return end
-	local newMode = mode + 1
-
-	-- If we're within the range of our voice modes, allow the increase, otherwise reset to the first state
-	if newMode <= #Cfg.voiceModes then
-		mode = newMode
-	else
-		mode = 1
-	end
-
-	setProximityState(Cfg.voiceModes[mode][1], false)
-	TriggerEvent('pma-voice:setTalkingMode', mode)
+	changeMode()
 end, false)
 if gameVersion == 'fivem' then
 	RegisterKeyMapping('cycleproximity', 'Cycle Proximity', 'keyboard', GetConvar('voice_defaultCycle', 'Z'))
-end
-
--- hacky workaround to the fact that you can't bind secondary key mappings to PTT
-if gameVersion == 'fivem' then
-	local isSecondaryPttPressed = false
-
-	RegisterCommand("+secondary_ptt", function()
-		isSecondaryPttPressed = true
-		CreateThread(function()
-			while isSecondaryPttPressed do
-				SetControlNormal(0, 249, 1.0)
-				SetControlNormal(1, 249, 1.0)
-				SetControlNormal(2, 249, 1.0)
-
-				Wait(0)
-			end
-		end)
-	end)
-
-	RegisterCommand("-secondary_ptt", function()
-		isSecondaryPttPressed = false
-	end)
-
-	RegisterKeyMapping('+secondary_ptt', 'A keybind that lets you have a secondary PTT', 'PAD_ANALOGBUTTOn', GetConvar('voice_defaultSecondary', 'LUP_INDEX'))
 end
